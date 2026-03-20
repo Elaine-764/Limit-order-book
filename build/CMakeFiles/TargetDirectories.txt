@@ -1,5 +1,0 @@
-/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build/CMakeFiles/lob_core.dir
-/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build/CMakeFiles/lob_server.dir
-/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build/CMakeFiles/lob_client.dir
-/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build/CMakeFiles/edit_cache.dir
-/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build/CMakeFiles/rebuild_cache.dir
