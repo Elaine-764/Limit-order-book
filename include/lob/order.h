@@ -1,11 +1,12 @@
 #ifndef ___ORDER___H__
 #define ___ORDER___H__
 
-#include "lob/types.h"
+#include "types.h"
 #include <chrono>
 
 struct Order {
     int order_id;
+    std::string ticker;
     Side side;
     Price price;
     Price stop_price;
@@ -16,10 +17,11 @@ struct Order {
     std::chrono::steady_clock::time_point timestamp;
     std::chrono::steady_clock::time_point expiration;
   
-    Order(Price price, Side side, int quantity, 
+    Order(std::string ticker, Price price, Side side, int quantity, 
           OrderType type, TimeInForce tif, FillPolicy fill, 
           Price stop_price = 0)
-        : order_id{next_id++}
+        : ticker {ticker}
+        , order_id{this->next_id++}
         , price{price}
         , stop_price{stop_price}
         , side{side}

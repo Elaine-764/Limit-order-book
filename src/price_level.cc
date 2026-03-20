@@ -1,5 +1,5 @@
-#include "lob/price_level.h"
-#include "lob/order.h"
+#include "../include/lob/price_level.h"
+#include "../include/lob/order.h"
 #include <algorithm>
 #include <deque>
 #include <stdexcept>
@@ -18,7 +18,7 @@ void PriceLevel::addOrder(Order& order) {
 }
 
 // remove from price level
-void PriceLevel::removeOrder(int id) {
+void PriceLevel::cancelOrder(int id) {
     auto it = std::find_if(order_queue.begin(), order_queue.end(), [id](const Order& order) {
         return order.order_id == id;
     });
@@ -64,8 +64,9 @@ void PriceLevel::decreaseQuantity(int order_id, int new_quantity) {
     auto it = std::find_if(order_queue.begin(), order_queue.end(), [order_id](const Order& order) {
         return order.order_id == order_id;
     });
+    if (it == order_queue.end())
+        throw std::invalid_argument("Order not found in decreaseQuantity");
     it->quantity = new_quantity;
-    return;
 }
 
 Order& PriceLevel::find(int order_id) {
@@ -77,4 +78,33 @@ Order& PriceLevel::find(int order_id) {
     } else {
         throw std::invalid_argument(std::format("Order ID {} does not exist.", std::to_string(order_id)));
     }
+}
+
+Order& PriceLevel::front() {
+    if (order_queue.empty())
+        throw std::out_of_range("PriceLevel is empty");
+    return order_queue.front();
+}
+
+void PriceLevel::popFront() {
+    if (order_queue.empty())
+        throw std::out_of_range("PriceLevel is empty");
+    // adjust total quantity
+    setQuantity(getQuantity() - order_queue.front().quantity);
+    order_queue.pop_front();
+}
+
+void PriceLevel::print() const {
+    std::cout << "  PriceLevel @ " << price 
+              << " (total_qty=" << quantity << ")\n";
+    for (const auto& o : order_queue) {
+        std::cout << "    Order id=" << o.order_id
+                  << " qty=" << o.quantity
+                  << " side=" << (o.side == Side::BUY ? "BUY" : "SELL")
+                  << "\n";
+    }
+}
+
+bool PriceLevel::isEmpty() const {
+    return order_queue.empty(); 
 }

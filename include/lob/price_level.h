@@ -1,7 +1,7 @@
 #ifndef ___PRICE_LEVEL___H__
 #define ___PRICE_LEVEL___H__
 
-#include "lob/order.h"
+#include "order.h"
 #include <deque>
 
 class PriceLevel {
@@ -9,11 +9,15 @@ class PriceLevel {
     std::deque<Order> order_queue;
     int quantity;
   public:
+    // Default constructor
+    PriceLevel() : price{0}, quantity{0} {} 
+    PriceLevel(Price p) : price {p}, quantity {0} {}
+
     // add to price level
     void addOrder(Order& order);
 
     // remove from price level
-    void removeOrder(int id);
+    void cancelOrder(int id);
     void modifyOrder(int order_id, const Order& new_order);
     void decreaseQuantity(int order_id, int new_quantity);
 
@@ -25,7 +29,9 @@ class PriceLevel {
     Order& front();
     Order& find(int order_id);
     void popFront();
-    bool isEmpty() {return quantity == 0;}
+    bool isEmpty() const;
+
+    void print() const;
 };
 
 #endif

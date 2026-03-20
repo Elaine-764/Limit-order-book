@@ -1,0 +1,44 @@
+[
+{
+  "directory": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build",
+  "command": "/usr/bin/c++  -I/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/include -isystem /opt/homebrew/include -std=gnu++20 -arch arm64 -o CMakeFiles/lob_core.dir/src/order_book.cc.o -c /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/order_book.cc",
+  "file": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/order_book.cc",
+  "output": "CMakeFiles/lob_core.dir/src/order_book.cc.o"
+},
+{
+  "directory": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build",
+  "command": "/usr/bin/c++  -I/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/include -isystem /opt/homebrew/include -std=gnu++20 -arch arm64 -o CMakeFiles/lob_core.dir/src/price_level.cc.o -c /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/price_level.cc",
+  "file": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/price_level.cc",
+  "output": "CMakeFiles/lob_core.dir/src/price_level.cc.o"
+},
+{
+  "directory": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build",
+  "command": "/usr/bin/c++  -I/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/include -isystem /opt/homebrew/include -std=gnu++20 -arch arm64 -o CMakeFiles/lob_core.dir/src/utilities.cc.o -c /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/utilities.cc",
+  "file": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/utilities.cc",
+  "output": "CMakeFiles/lob_core.dir/src/utilities.cc.o"
+},
+{
+  "directory": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build",
+  "command": "/usr/bin/c++  -I/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/include -isystem /opt/homebrew/include -std=gnu++20 -arch arm64 -o CMakeFiles/lob_core.dir/src/feed_handler.cc.o -c /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/feed_handler.cc",
+  "file": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/feed_handler.cc",
+  "output": "CMakeFiles/lob_core.dir/src/feed_handler.cc.o"
+},
+{
+  "directory": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build",
+  "command": "/usr/bin/c++  -I/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/include -isystem /opt/homebrew/include -std=gnu++20 -arch arm64 -o CMakeFiles/lob_core.dir/src/exchange.cc.o -c /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/exchange.cc",
+  "file": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/exchange.cc",
+  "output": "CMakeFiles/lob_core.dir/src/exchange.cc.o"
+},
+{
+  "directory": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build",
+  "command": "/usr/bin/c++  -I/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/include -isystem /opt/homebrew/include -std=gnu++20 -arch arm64 -o CMakeFiles/lob_server.dir/src/server.cc.o -c /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/server.cc",
+  "file": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/server.cc",
+  "output": "CMakeFiles/lob_server.dir/src/server.cc.o"
+},
+{
+  "directory": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build",
+  "command": "/usr/bin/c++  -I/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/include -isystem /opt/homebrew/include -std=gnu++20 -arch arm64 -o CMakeFiles/lob_client.dir/src/client.cc.o -c /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/client.cc",
+  "file": "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/src/client.cc",
+  "output": "CMakeFiles/lob_client.dir/src/client.cc.o"
+}
+]

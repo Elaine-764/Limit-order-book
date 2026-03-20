@@ -10,3 +10,4 @@ Design decisions:
 
 Improvements for later:
 - implement a red-black tree, sorted flat array, or a skip list for price levels, replacing `std::map`
+
