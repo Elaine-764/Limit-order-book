@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 
-int Order::next_id = 0; // initialize order count
+int Order::next_id = 1; // initialize order count
 
 std::vector<FillResult> OrderBook::addOrder(Order& order) {
     if (order.side == Side::BUY) {
@@ -167,7 +167,8 @@ std::vector<FillResult> OrderBook::match() {
         if (bidPL.isEmpty()) bids.erase(bid_it);
         if (askPL.isEmpty()) asks.erase(ask_it);
         
-        fills.push_back({bid_id, ask_id, tradeQty, tradePrice});
+        fills.push_back({bid_id, 0, tradeQty, tradePrice}); // buy
+        fills.push_back({ask_id, 1, tradeQty, tradePrice}); // sell
     }
 
     std::cout << "Returning traded price" << std::endl;

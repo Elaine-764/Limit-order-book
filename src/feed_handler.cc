@@ -6,8 +6,8 @@
 Order deserialize(const OrderMessage& msg) {
     // parse input
     if (msg.order_type > 3)   throw std::invalid_argument("unknown order type");
-    if (msg.time_in_force > 1) throw std::invalid_argument("unknown time in force");
-    if (msg.fill_policy > 2)  throw std::invalid_argument("unknown fill policy");
+    if (msg.time_in_force > 2) throw std::invalid_argument("unknown time in force");
+    if (msg.fill_policy > 1)  throw std::invalid_argument("unknown fill policy");
     if (msg.side > 1)         throw std::invalid_argument("unknown side");
     
     Price stop_price;
@@ -18,6 +18,7 @@ Order deserialize(const OrderMessage& msg) {
         Price last_price = find_last_price(msg.ticker);
         stop_price = (msg.side == SELL) ? last_price * (1.0 - pct) : last_price * (1.0 + pct);
     }
+
     return Order {
         static_cast<std::string>(msg.ticker),
         static_cast<Price>(msg.price),

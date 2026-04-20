@@ -21,6 +21,7 @@ public:
         : std::runtime_error(message) {}
 };
 
+
 // Client input
 struct __attribute__((packed)) OrderMessage {
     uint32_t order_id;     // null or 0 if order type is "A" for add
@@ -32,15 +33,18 @@ struct __attribute__((packed)) OrderMessage {
     uint32_t quantity;
     uint8_t  order_type;    // 0 = MARKET, 1 = LIMIT, 2 = STOP, 3 = STOP_LIMIT
     uint8_t  time_in_force; // 0 = DAY, 1 = GTC, 2 = FOK
-    uint8_t  fill_policy;   // 0 = NORMAL, 1 = FOK, 2 = AON
+    uint8_t  fill_policy;   // 0 = NORMAL, 2 = AON
     char     ticker[8];
 };
 
 // LOB output
+// TODO: add other info such as tif, order type, stop value, fill policy!!
 struct __attribute__((packed)) ExecutionReport {
+    // uint32_t bid_id;
+    // uint32_t ask_id;
     uint32_t order_id;
     uint8_t  side; // 0 - buy, 1 - sell
-    uint8_t  status;      // 'F' filled, 'P' partial, 'A' acknowledged
+    char  status;      // 'F' filled, 'P' partial, 'A' acknowledged
     int32_t  fill_price;
     uint32_t fill_qty;
     uint32_t remaining_qty;
@@ -48,8 +52,10 @@ struct __attribute__((packed)) ExecutionReport {
 };
 
 struct FillResult {
-    int     bid_id;
-    int     ask_id;
+    int     order_id;
+    int     side; // 0 - buy, 1 - sell
+    // int     bid_id;
+    // int     ask_id;
     int     qty;
     Price   price;
 };

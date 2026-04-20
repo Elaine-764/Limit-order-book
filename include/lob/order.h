@@ -20,11 +20,11 @@ struct Order {
     Order(std::string ticker, Price price, Side side, int quantity, 
           OrderType type, TimeInForce tif, FillPolicy fill, 
           Price stop_price = 0)
-        : ticker {ticker}
-        , order_id{this->next_id++}
+        : order_id{this->next_id++}
+        , ticker {ticker}
+        , side{side}
         , price{price}
         , stop_price{stop_price}
-        , side{side}
         , order_type{type}
         , tif{tif}
         , fill{fill}

@@ -22,7 +22,7 @@ class Exchange {
     Order& findOrder(const int order_id);
     const Order& findOrder(const int order_id) const;
 
-    bool CheckIfOrderExists(const int order_id);
+    bool CheckIfOrderExists(const int order_id) const;
     int getRemainingQty(int order_id) const;
 
     void print() const;

@@ -17,33 +17,29 @@ std::vector<FillResult> Exchange::addOrder(Order &order) {
         order_id_to_ticker.erase(order.order_id);
     }
     std::cout << "added to order_id_to_ticker map" << std::endl;
+    std::cout << "number of fills: " << fills.size() << std::endl;
     return fills;
 }
 
 void Exchange::cancelOrder(int order_id) {
-    try {
-        CheckIfOrderExists(order_id); 
-        std::string tic = order_id_to_ticker[order_id];
-        books[tic].cancelOrder(order_id);
-        order_id_to_ticker.erase(order_id);
-    } catch (...) {
+    if (!CheckIfOrderExists(order_id)) {
         throw std::invalid_argument("unknown order");
     }
+    std::string tic = order_id_to_ticker[order_id];
+    books[tic].cancelOrder(order_id);
+    order_id_to_ticker.erase(order_id);
 }
 
 std::vector<FillResult> Exchange::modifyOrder(int order_id, Order &new_order) {
-    try {
-        CheckIfOrderExists(order_id); 
-        std::string tic = order_id_to_ticker[order_id];
-        std::vector<FillResult> fills = books[tic].modifyOrder(order_id, new_order);
-        return fills;
-        // books[tic].match();
-    } catch (...) {
+    if (!CheckIfOrderExists(order_id)) {
         throw std::invalid_argument("unknown order");
     }
+    std::string tic = order_id_to_ticker[order_id];
+    std::vector<FillResult> fills = books[tic].modifyOrder(order_id, new_order);
+    return fills;
 }
 
-bool Exchange::CheckIfOrderExists(const int order_id) {
+bool Exchange::CheckIfOrderExists(const int order_id) const {
     auto it = order_id_to_ticker.find(order_id);
     if (it == order_id_to_ticker.end()) return false;
     return true;
@@ -83,7 +79,7 @@ Order& Exchange::findOrder(const int order_id) {
         return it->second.findOrder(order_id);
 
     } catch (...) {
-        throw std::invalid_argument("invalid order id");
+        throw std::invalid_argument("invalid order id during Exchange.findOrder");
     }
 }
 
@@ -94,7 +90,7 @@ const Order& Exchange::findOrder(const int order_id) const {
         return it->second.findOrder(order_id);
 
     } catch (...) {
-        throw std::invalid_argument("invalid order id");
+        throw std::invalid_argument("invalid order id during Exchange.findOrder const");
     }
 }
 
@@ -112,6 +108,9 @@ void Exchange::print() const {
 }
 
 int Exchange::getRemainingQty(int order_id) const {
-    auto &order = findOrder(order_id);
-    return order.quantity;
+    if (CheckIfOrderExists(order_id)) {
+        auto &order = findOrder(order_id);
+        return order.quantity;
+    }
+    return 0;
 }

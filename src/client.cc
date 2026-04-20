@@ -31,14 +31,15 @@ enum Colors {
 };
 
 // ─── state ───────────────────────────────────────────────────────────────────
-enum class OrderStatus { ACTIVE, FILLED, CANCELLED, EXPIRED };
+enum class OrderStatus { ACTIVE, FILLED, PARTIALLY_FILLED, CANCELLED, EXPIRED }; 
 
 static std::string status_str(OrderStatus s) {
     switch (s) {
-        case OrderStatus::ACTIVE:    return "ACTIVE";
-        case OrderStatus::FILLED:    return "FILLED";
-        case OrderStatus::CANCELLED: return "CANCELLED";
-        case OrderStatus::EXPIRED:   return "EXPIRED";
+        case OrderStatus::ACTIVE:             return "ACTIVE";
+        case OrderStatus::FILLED:             return "FILLED";
+        case OrderStatus::CANCELLED:          return "CANCELLED";
+        case OrderStatus::EXPIRED:            return "EXPIRED";
+        case OrderStatus::PARTIALLY_FILLED:   return "PARTIAL FILL";
     }
     return "UNKNOWN";
 }
@@ -55,8 +56,13 @@ struct TradeRecord {
     uint32_t    order_id;
     std::string ticker;
     int         qty;
+    uint32_t    remaining_qty;
     int32_t     price;
     uint8_t     side;        // 0=BUY 1=SELL
+    uint8_t     order_type;  // 0=MARKET,1=LIMIT,2=STOP,3=STOP_LIMIT
+    uint8_t     tif;         // time in force
+    uint8_t     fill_policy; // fill policy
+    int32_t     stop_value;
     OrderStatus status;
     std::string created_at;  // timestamp string when first added
     std::string updated_at;  // timestamp string of last edit
@@ -151,15 +157,15 @@ static void draw_book(UIState& ui,
 
     wrefresh(ui.win_book);
 }
-
+// TODO: add more info to the history panel: order type, tif, etc
 static void draw_history(UIState& ui) {
     wclear(ui.win_history);
     draw_border_title(ui.win_history, "TRADE HISTORY", C_HEADER);
 
     // header row
     wattron(ui.win_history, A_BOLD | COLOR_PAIR(C_NORMAL));
-    mvwprintw(ui.win_history, 1, 2, "%-4s %-6s %-5s %-10s %-4s %-9s %-8s %-8s",
-              "ID", "TICKER", "SIDE", "PRICE", "QTY", "STATUS", "CREATED", "UPDATED");
+    mvwprintw(ui.win_history, 1, 2, "%-4s %-6s %-5s %-4s %-3s %-4s %-6s %-4s %-4s %-7s %-8s %-8s",
+              "ID", "TICKER", "SIDE", "TYPE", "TIF", "FILL", "STOP", "QTY", "REM", "STATUS", "CREATED", "UPDATED");
     wattroff(ui.win_history, A_BOLD | COLOR_PAIR(C_NORMAL));
 
     int row = 2;
@@ -173,18 +179,23 @@ static void draw_history(UIState& ui) {
         switch (t.status) {
             case OrderStatus::ACTIVE:    cpair = C_BID;    attrs = A_BOLD;   break;
             case OrderStatus::FILLED:    cpair = C_FILL;   attrs = A_DIM;    break;
+            case OrderStatus::PARTIALLY_FILLED:    cpair = C_FILL;   attrs = A_BOLD;    break;
             case OrderStatus::CANCELLED: cpair = C_ASK;    attrs = A_DIM;    break;
             case OrderStatus::EXPIRED:   cpair = C_NORMAL; attrs = A_DIM;    break;
         }
 
         wattron(ui.win_history, COLOR_PAIR(cpair) | attrs);
         mvwprintw(ui.win_history, row++, 2,
-                  "%-4u %-6s %-5s %-10s %-4d %-9s %-8s %-8s",
+                  "%-4u %-6s %-5s %-4u %-3u %-4u %-6d %-4d %-4u %-7s %-8s %-8s",
                   t.order_id,
                   t.ticker.c_str(),
                   t.side == 0 ? "BUY" : "SELL",
-                  price_str(t.price).c_str(),
+                  t.order_type,
+                  t.tif,
+                  t.fill_policy,
+                  t.stop_value,
                   t.qty,
+                  t.remaining_qty,
                   status_str(t.status).c_str(),
                   t.created_at.c_str(),
                   t.updated_at.c_str());
@@ -218,6 +229,41 @@ static int32_t entry_prompt_int(WINDOW* w, int& row, const char* prompt) {
     try { return std::stoi(s); } catch (...) { return 0; }
 }
 
+// "dropdown" / highlighted menu for input selection
+static int entry_menu(WINDOW* w, int& row, const char* prompt,
+                      const std::vector<std::string>& options) {
+    mvwprintw(w, row++, 2, "%s", prompt);
+    
+    int selected = 0;
+    int n = (int)options.size();
+    
+    // draw options, wait for valid keypress
+    while (true) {
+        for (int i = 0; i < n; ++i) {
+            if (i == selected) {
+                wattron(w, COLOR_PAIR(C_HIGHLIGHT) | A_BOLD);
+                mvwprintw(w, row + i, 4, "> %s", options[i].c_str());
+                wattroff(w, COLOR_PAIR(C_HIGHLIGHT) | A_BOLD);
+            } else {
+                wattron(w, COLOR_PAIR(C_NORMAL));
+                mvwprintw(w, row + i, 4, "  %s", options[i].c_str());
+                wattroff(w, COLOR_PAIR(C_NORMAL));
+            }
+        }
+        wrefresh(w);
+
+        int ch = wgetch(w);
+        if (ch == KEY_UP)   selected = (selected - 1 + n) % n;
+        if (ch == KEY_DOWN) selected = (selected + 1) % n;
+        if (ch == '\n' || ch == KEY_ENTER) break;
+        // also allow number shortcuts
+        if (ch >= '0' && ch < '0' + n) { selected = ch - '0'; break; }
+    }
+
+    row += n + 1;  // advance past menu + blank line
+    return selected;
+}
+
 // ─── order entry flows ───────────────────────────────────────────────────────
 static void flow_add(UIState& ui) {
     WINDOW* w = ui.win_entry;
@@ -226,61 +272,126 @@ static void flow_add(UIState& ui) {
     wrefresh(w);
 
     int row = 2;
-    uint8_t side    = (uint8_t)entry_prompt_int(w, row, "Side (0=BUY, 1=SELL):");
-    int32_t price   = entry_prompt_int(w, row, "Price (ticks, e.g. 10005):");
-    uint32_t qty    = (uint32_t)entry_prompt_int(w, row, "Quantity:");
-    std::string ticker = entry_prompt_str(w, row, "Ticker (e.g. AAPL):");
 
-    // build and send message
+    int side = entry_menu(w, row, "Side:", {"BUY", "SELL"});
+
+    int order_type = entry_menu(w, row, "Order type:",
+                                {"Market", "Limit", "Stop", "Stop-Limit"});
+
+    // price — only ask if not market
+    int32_t price = 0;
+    if (order_type == 1) {
+        price = entry_prompt_int(w, row, "Limit price (ticks):");
+    }
+
+    // stop price — only for stop/stop-limit
+    int32_t stop_value = 0;
+    if (order_type == 2 || order_type == 3) {
+        stop_value = entry_prompt_int(w, row, "Stop price (ticks):");
+    }
+
+    uint32_t qty = (uint32_t)entry_prompt_int(w, row, "Quantity:");
+    std::string ticker = entry_prompt_str(w, row, "Ticker:");
+
+    // time in force
+    int tif = entry_menu(w, row, "Time in force:", {"Day", "Good Till Cancel", "Fill or Kill"});
+
+    // fill policy
+    int fill = entry_menu(w, row, "Fill policy:", {"Normal", "All or None"});
+
+    // build message
     OrderMessage msg{};
     msg.msg_type      = 'A';
-    msg.side          = side;
+    msg.side          = (uint8_t)side;
     msg.price         = price;
     msg.quantity      = qty;
-    msg.order_type    = 1;   // LIMIT
-    msg.time_in_force = 1;   // GTC
-    msg.fill_policy   = 0;   // NORMAL
-    msg.stop_value    = 0;
+    msg.order_type    = (uint8_t)order_type;
+    msg.time_in_force = (uint8_t)tif;
+    msg.fill_policy   = (uint8_t)fill;
+    msg.stop_value    = stop_value;
     strncpy(msg.ticker, ticker.c_str(), 8);
 
     write(ui.sock, &msg, sizeof(msg));
 
-    ExecutionReport report{};
-    read(ui.sock, &report, sizeof(report));
-
-    msg.order_id = report.order_id;
-    ui.sent_orders[report.order_id] = msg;
+    // count how many reports are coming
+    uint32_t count = 0;
+    read(ui.sock, &count, sizeof(count));
+    
+    // endwin();
+    // std::cout << "count=" << count << "\n";
 
     std::string ts = now_str();
-    // add to history or update existing
-    bool found = false;
-    for (auto& t : ui.history) {
-        if (t.order_id == report.order_id) {
-            t.status     = OrderStatus::ACTIVE;
-            t.updated_at = ts;
-            found = true; break;
+    bool any_filled = false;
+    std::string last_status_msg;
+
+    for (uint32_t i = 0; i < count; ++i) {
+        std::cout << "!!!" << std::endl;
+        ExecutionReport report{};
+        read(ui.sock, &report, sizeof(report));
+        std::cout << "report: id=" << static_cast<int>(report.order_id)
+          << " status=" << (char)report.status
+          << " fill_qty=" << report.fill_qty << "\n";
+
+        // first report carries the assigned order_id
+        if (i == 0) {
+            msg.order_id = report.order_id;
+            ui.sent_orders[report.order_id] = msg;
+        }
+
+        // update or insert history entry
+        // TODO: does not ALWAYS show partially filled, sometimes it doesn't even show filled
+        bool found = false;
+        std::string ticker = std::string(report.ticker, strnlen(report.ticker, 8));
+        for (auto& t : ui.history) {
+            if (t.order_id == report.order_id) {
+                found = true;
+                if      (report.status == 'F') t.status = OrderStatus::FILLED;
+                else if (report.status == 'P') t.status = OrderStatus::PARTIALLY_FILLED;
+                else                           t.status = OrderStatus::ACTIVE;
+                t.remaining_qty = report.remaining_qty;
+                t.updated_at = ts;
+                break;
+            }
+        }
+        if (!found) {
+            OrderStatus os = (report.status == 'F') ? OrderStatus::FILLED :
+                             (report.status == 'P') ? OrderStatus::PARTIALLY_FILLED :
+                                                      OrderStatus::ACTIVE;
+            ui.history.push_back({
+                report.order_id,
+                ticker,
+                (int)msg.quantity,
+                report.remaining_qty,
+                msg.price,
+                msg.side,
+                msg.order_type,
+                msg.time_in_force,
+                msg.fill_policy,
+                msg.stop_value,
+                os,
+                ts,
+                ts
+            });
+        }
+
+        if (report.status == 'F' || report.status == 'P') {
+            any_filled = true;
+            std::string action = report.side == 0 ? "Bought" : "Sold";
+            last_status_msg = "Trade executed. " + action + " "
+                + std::to_string(report.fill_qty) + " of "
+                + ticker
+                + " @ " + price_str(report.fill_price) + " per share. Trade status: " + report.status;
+            if (report.status == 'F') {
+                ui.sent_orders.erase(report.order_id);
+            }
+        } else {
+            last_status_msg = "Order resting. ID="
+                + std::to_string(report.order_id);
         }
     }
-    if (!found) {
-        ui.history.push_back({
-            report.order_id,
-            ticker,
-            (int)qty,
-            price,
-            side,
-            OrderStatus::ACTIVE,
-            ts,   // created_at
-            ts    // updated_at
-        });
-    }
-    if (report.status == 'F') {
-        std::string action = report.side == 0 ? "Bought" : "Sold";
-        set_status(ui, "Trade executed. " + action  + " " + std::to_string(report.fill_qty) + " shares of " 
-                + msg.ticker + " at $" + std::to_string(report.fill_price) + ".");
-    } else {
-        set_status(ui, "Order added. ID=" + std::to_string(report.order_id)
-                + "  status=" + (char)report.status);
-    }
+
+    set_status(ui, last_status_msg);
+    draw_history(ui);   // force redraw immediately after fills
 }
 
 static void flow_cancel(UIState& ui) {
@@ -307,24 +418,29 @@ static void flow_cancel(UIState& ui) {
     OrderMessage msg{};
     msg.msg_type = 'C';
     msg.order_id = id;
-    write(ui.sock, &msg, sizeof(msg));
 
+    write(ui.sock, &msg, sizeof(msg));
     ExecutionReport report{};
     read(ui.sock, &report, sizeof(report));
 
+    bool had_local_order = ui.sent_orders.contains(id);
     ui.sent_orders.erase(id);
 
     // update history status
     std::string ts = now_str();
-    for (auto& t : ui.history) {
-        if (t.order_id == id) {
-            t.status     = OrderStatus::CANCELLED;
-            t.updated_at = ts;
-            break;
+    if (had_local_order) {
+        for (auto& t : ui.history) {
+            if (t.order_id == id) {
+                t.status     = OrderStatus::CANCELLED;
+                t.updated_at = ts;
+                set_status(ui, "Cancelled ID=" + std::to_string(id));
+                break;
+            }
         }
+    } else {
+        set_status(ui, "Order ID not found locally");
     }
 
-    set_status(ui, "Cancelled ID=" + std::to_string(id));
 }
 
 static void flow_modify(UIState& ui) {
@@ -388,18 +504,24 @@ static void flow_modify(UIState& ui) {
     // update history
     std::string ts = now_str();
     for (auto& t : ui.history) {
-        if (t.order_id == id) {
-            t.price      = new_price;
-            t.qty        = new_qty;
-            t.updated_at = ts;
-            break;
+        if (t.order_id == report.order_id) {
+            if (report.status == 'A') {
+                t.status = OrderStatus::ACTIVE;
+                t.updated_at = ts;
+            } else if (report.status == 'P') {
+                t.status = OrderStatus::PARTIALLY_FILLED;
+                t.updated_at = ts;
+            } else if (report.status == 'F') {
+                t.status = OrderStatus::FILLED;
+                t.updated_at = ts;
+            } 
         }
     }
 
     if (report.status == 'F') {
         std::string action = report.side == 0 ? "Bought" : "Sold";
         set_status(ui, "Trade executed. " + action  + " " + std::to_string(report.fill_qty) + " shares of " 
-                + msg.ticker + " at $" + std::to_string(report.fill_price) + ".");
+                + msg.ticker + " at $" + std::to_string(report.fill_price) + " per share.");
     } else {
         set_status(ui, "Modified ID=" + std::to_string(id));
     }
@@ -451,6 +573,8 @@ int main() {
     WINDOW* win_entry   = newwin(book_h,    ENTRY_W, 0, BOOK_W + 1);
     WINDOW* win_history = newwin(HISTORY_H, cols,    book_h, 0);
     WINDOW* win_status  = newwin(1,         cols,    rows-1, 0);
+
+    keypad(win_entry, TRUE); 
 
     UIState ui;
     ui.win_book    = win_book;
