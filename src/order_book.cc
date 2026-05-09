@@ -124,36 +124,70 @@ Price OrderBook::getSpread() const {
 std::vector<FillResult> OrderBook::match() {
     std::vector<FillResult> fills;
 
+    // First, check and trigger any stop orders
+    triggerStopOrders();
+
+    // Process all orders that can potentially match
     while (!bids.empty() && !asks.empty()) {
         auto bid_it = bids.begin();
         auto ask_it = asks.begin();
-        // check if match condition exists
-        if (bid_it->first < ask_it->first) break;
-        std::cout << "match condition found" << std::endl;
-
+        
+        // Get the best bid and ask prices
+        Price best_bid = bid_it->first;
+        Price best_ask = ask_it->first;
+        
+        // Check if there's a cross (bid >= ask)
+        if (best_bid < best_ask) break;
+        
         PriceLevel &bidPL = bid_it->second;
         PriceLevel &askPL = ask_it->second;
 
-        if (bidPL.isEmpty() || askPL.isEmpty()) break; 
-        std::cout << "no empty PLs" << std::endl;
+        if (bidPL.isEmpty() || askPL.isEmpty()) break;
 
         Order &bidOrder = bidPL.front();
         Order &askOrder = askPL.front();
-        std::cout << "got orders" << std::endl;
-        int bid_id  = bidOrder.order_id;
-        int ask_id  = askOrder.order_id;
+        
+        // Check fill policies - AON orders can only match if entire quantity can be filled
+        if (bidOrder.fill == FillPolicy::ALL_OR_NONE && bidOrder.quantity > askPL.getQuantity()) {
+            continue; // Skip this bid order
+        }
+        if (askOrder.fill == FillPolicy::ALL_OR_NONE && askOrder.quantity > bidPL.getQuantity()) {
+            continue; // Skip this ask order
+        }
+
+        int bid_id = bidOrder.order_id;
+        int ask_id = askOrder.order_id;
+        
+        // Determine trade quantity
         int tradeQty = std::min(bidOrder.quantity, askOrder.quantity);
-        Price tradePrice = askPL.getPrice();
+        
+        // For AON orders, trade quantity must be the full order quantity
+        if (bidOrder.fill == FillPolicy::ALL_OR_NONE) {
+            tradeQty = bidOrder.quantity;
+        }
+        if (askOrder.fill == FillPolicy::ALL_OR_NONE) {
+            tradeQty = askOrder.quantity;
+        }
+        
+        // Determine trade price based on order types
+        Price tradePrice;
+        if (bidOrder.order_type == OrderType::MARKET || askOrder.order_type == OrderType::MARKET) {
+            // Market orders execute at the best available price
+            tradePrice = (bidOrder.order_type == OrderType::MARKET) ? best_ask : best_bid;
+        } else {
+            // Limit orders execute at the best available price (price improvement)
+            tradePrice = (bidOrder.price >= askOrder.price) ? askOrder.price : bidOrder.price;
+        }
 
-        std::cout << "Trade executed: qty=" << tradeQty
-                  << " price=" << tradePrice << "\n";
+        std::cout << "Trade executed: qty=" << tradeQty << " price=" << tradePrice << "\n";
 
+        // Update quantities
         bidOrder.quantity -= tradeQty;
         bidPL.setQuantity(bidPL.getQuantity() - tradeQty);
         askOrder.quantity -= tradeQty;
         askPL.setQuantity(askPL.getQuantity() - tradeQty);
 
-        std::cout << "Removing order" << std::endl;
+        // Remove filled orders
         if (bidOrder.quantity == 0) {
             order_index.erase(bid_id);
             bidPL.popFront();
@@ -162,8 +196,8 @@ std::vector<FillResult> OrderBook::match() {
             order_index.erase(ask_id);
             askPL.popFront();
         }
-        std::cout << "finished removing orders" << std::endl;
 
+        // Remove empty price levels
         if (bidPL.isEmpty()) bids.erase(bid_it);
         if (askPL.isEmpty()) asks.erase(ask_it);
         
@@ -171,8 +205,98 @@ std::vector<FillResult> OrderBook::match() {
         fills.push_back({ask_id, 1, tradeQty, tradePrice}); // sell
     }
 
+    // Handle FOK orders - remove any unfilled FOK orders
+    std::vector<int> fok_orders_to_remove;
+    for (auto& [price, pl] : bids) {
+        for (auto& order : pl.getOrderQueue()) {
+            if (order.tif == TimeInForce::FILL_OR_KILL && order.quantity > 0) {
+                fok_orders_to_remove.push_back(order.order_id);
+            }
+        }
+    }
+    for (auto& [price, pl] : asks) {
+        for (auto& order : pl.getOrderQueue()) {
+            if (order.tif == TimeInForce::FILL_OR_KILL && order.quantity > 0) {
+                fok_orders_to_remove.push_back(order.order_id);
+            }
+        }
+    }
+    
+    for (int order_id : fok_orders_to_remove) {
+        cancelOrder(order_id);
+        // FOK orders that don't fill are cancelled and reported to client via server
+        // Server checks if order exists after addOrder; if FOK and doesn't exist with no fills, sends cancellation report
+    }
+
     std::cout << "Returning traded price" << std::endl;
     return fills;
+}
+
+void OrderBook::triggerStopOrders() {
+    if (bids.empty() && asks.empty()) return;
+    
+    Price best_bid = bids.empty() ? 0 : bids.begin()->first;
+    Price best_ask = asks.empty() ? INT32_MAX : asks.begin()->first;
+    
+    // Check buy stop orders (stop-buy becomes market buy when price drops to stop level)
+    std::vector<std::pair<Price, int>> stop_orders_to_trigger;
+    for (auto& [price, pl] : bids) {
+        for (auto& order : pl.getOrderQueue()) {
+            if (order.order_type == OrderType::STOP && order.side == Side::BUY) {
+                // Buy stop: trigger when best ask <= stop price
+                if (!asks.empty() && best_ask <= order.stop_price) {
+                    stop_orders_to_trigger.push_back({price, order.order_id});
+                }
+            } else if (order.order_type == OrderType::STOP_LIMIT && order.side == Side::BUY) {
+                // Buy stop-limit: trigger when best ask <= stop price, then becomes limit order
+                if (!asks.empty() && best_ask <= order.stop_price) {
+                    stop_orders_to_trigger.push_back({price, order.order_id});
+                }
+            }
+        }
+    }
+    
+    // Check sell stop orders (stop-sell becomes market sell when price rises to stop level)
+    for (auto& [price, pl] : asks) {
+        for (auto& order : pl.getOrderQueue()) {
+            if (order.order_type == OrderType::STOP && order.side == Side::SELL) {
+                // Sell stop: trigger when best bid >= stop price
+                if (!bids.empty() && best_bid >= order.stop_price) {
+                    stop_orders_to_trigger.push_back({price, order.order_id});
+                }
+            } else if (order.order_type == OrderType::STOP_LIMIT && order.side == Side::SELL) {
+                // Sell stop-limit: trigger when best bid >= stop price, then becomes limit order
+                if (!bids.empty() && best_bid >= order.stop_price) {
+                    stop_orders_to_trigger.push_back({price, order.order_id});
+                }
+            }
+        }
+    }
+    
+    // Trigger the stop orders
+    for (auto& [old_price, order_id] : stop_orders_to_trigger) {
+        auto& order = findOrder(order_id);
+        if (order.order_type == OrderType::STOP) {
+            // Convert to market order
+            order.order_type = OrderType::MARKET;
+            order.price = 0; // Market orders don't have a specific price
+        } else if (order.order_type == OrderType::STOP_LIMIT) {
+            // Convert to limit order at the stop price
+            order.order_type = OrderType::LIMIT;
+            order.price = order.stop_price;
+        }
+        // Move to appropriate price level if needed
+        if (order.order_type == OrderType::MARKET) {
+            // Market orders go to the best available price level
+            Price new_price = (order.side == Side::BUY) ? best_ask : best_bid;
+            if (new_price != old_price) {
+                // Remove from old price level and add to new one
+                cancelOrder(order_id);
+                order.price = new_price;
+                addOrder(order);
+            }
+        }
+    }
 }
 
 Order& OrderBook::findOrder(int order_id) {

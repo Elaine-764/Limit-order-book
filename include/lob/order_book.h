@@ -26,6 +26,7 @@ class OrderBook {
     
     // matching engine
     std::vector<FillResult> match();
+    void triggerStopOrders();
 
     // a lot more methods
     Order& findOrder(int order_id);

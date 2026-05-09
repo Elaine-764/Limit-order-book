@@ -13,9 +13,20 @@ std::vector<FillResult> Exchange::addOrder(Order &order) {
     // std::cout << "Starting match" << std::endl;
     // books[ticker].match();
     std::cout << "Finished match (from exchange)" << std::endl;
+    
+    // Clean up order_id_to_ticker for all fully-filled orders from the fills list
+    for (const auto& fill : fills) {
+        // Check if this order still exists after matching
+        if (!books[ticker].checkIfOrderExists(fill.order_id)) {
+            order_id_to_ticker.erase(fill.order_id);
+        }
+    }
+    
+    // Also check the order being added
     if (!books[ticker].checkIfOrderExists(order.order_id)) {
         order_id_to_ticker.erase(order.order_id);
     }
+    
     std::cout << "added to order_id_to_ticker map" << std::endl;
     std::cout << "number of fills: " << fills.size() << std::endl;
     return fills;
@@ -109,8 +120,13 @@ void Exchange::print() const {
 
 int Exchange::getRemainingQty(int order_id) const {
     if (CheckIfOrderExists(order_id)) {
-        auto &order = findOrder(order_id);
-        return order.quantity;
+        try {
+            auto &order = findOrder(order_id);
+            return order.quantity;
+        } catch (...) {
+            // Order exists in map but not in book - likely just got fully filled
+            return 0;
+        }
     }
     return 0;
 }

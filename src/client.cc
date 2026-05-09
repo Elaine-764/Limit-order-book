@@ -11,6 +11,7 @@
 #include <vector>
 #include <sstream>
 #include <cstring>
+#include <cctype>
 #include <chrono>
 #include <ctime>
 #include <iostream>
@@ -97,6 +98,37 @@ static std::string price_str(int32_t ticks) {
     return ss.str();
 }
 
+static const char* order_type_str(uint8_t order_type) {
+    switch (order_type) {
+        case 0: return "MKT";
+        case 1: return "LMT";
+        case 2: return "STP";
+        case 3: return "STPLM";
+        default: return "UNK";
+    }
+}
+
+static const char* tif_str(uint8_t tif) {
+    switch (tif) {
+        case 0: return "DAY";
+        case 1: return "GTC";
+        case 2: return "FOK";
+        default: return "NONE";
+    }
+}
+
+static const char* fill_policy_str(uint8_t fill_policy) {
+    switch (fill_policy) {
+        case 0: return "NOR";
+        case 1: return "AON";
+        default: return "UNK";
+    }
+}
+
+static std::string stop_str(int32_t stop_value) {
+    return stop_value == 0 ? "--" : price_str(stop_value);
+}
+
 static void draw_border_title(WINDOW* w, const char* title, int color_pair) {
     wattron(w, COLOR_PAIR(color_pair) | A_BOLD);
     box(w, 0, 0);
@@ -157,15 +189,15 @@ static void draw_book(UIState& ui,
 
     wrefresh(ui.win_book);
 }
-// TODO: add more info to the history panel: order type, tif, etc
+// TODO: add more price columns: Limit, stop, and stop limit, they can be "--" if not applicable
 static void draw_history(UIState& ui) {
     wclear(ui.win_history);
     draw_border_title(ui.win_history, "TRADE HISTORY", C_HEADER);
 
     // header row
     wattron(ui.win_history, A_BOLD | COLOR_PAIR(C_NORMAL));
-    mvwprintw(ui.win_history, 1, 2, "%-4s %-6s %-5s %-4s %-3s %-4s %-6s %-4s %-4s %-7s %-8s %-8s",
-              "ID", "TICKER", "SIDE", "TYPE", "TIF", "FILL", "STOP", "QTY", "REM", "STATUS", "CREATED", "UPDATED");
+    mvwprintw(ui.win_history, 1, 2, "%-4s %-6s %-5s %-6s %-6s %-5s %-6s %-6s %-8s %-8s %-7s %-8s %-8s",
+              "ID", "TICKER", "SIDE", "TYPE", "TIF", "FILL", "PRICE", "STOP", "INIT_QTY", "REM_QTY", "STATUS", "CREATED", "UPDATED");
     wattroff(ui.win_history, A_BOLD | COLOR_PAIR(C_NORMAL));
 
     int row = 2;
@@ -184,16 +216,18 @@ static void draw_history(UIState& ui) {
             case OrderStatus::EXPIRED:   cpair = C_NORMAL; attrs = A_DIM;    break;
         }
 
+        // map tif and fill policy to readable strings
         wattron(ui.win_history, COLOR_PAIR(cpair) | attrs);
         mvwprintw(ui.win_history, row++, 2,
-                  "%-4u %-6s %-5s %-4u %-3u %-4u %-6d %-4d %-4u %-7s %-8s %-8s",
+                  "%-4u %-6s %-5s %-6s %-6s %-5s %-6s %-6s %-8d %-8u %-7s %-8s %-8s",
                   t.order_id,
                   t.ticker.c_str(),
                   t.side == 0 ? "BUY" : "SELL",
-                  t.order_type,
-                  t.tif,
-                  t.fill_policy,
-                  t.stop_value,
+                  order_type_str(t.order_type),
+                  tif_str(t.tif),
+                  fill_policy_str(t.fill_policy),
+                  (t.order_type == 1 || t.order_type == 3) ? price_str(t.price).c_str() : "--",
+                  stop_str(t.stop_value).c_str(),
                   t.qty,
                   t.remaining_qty,
                   status_str(t.status).c_str(),
@@ -205,28 +239,89 @@ static void draw_history(UIState& ui) {
 }
 
 // ─── entry panel helpers ─────────────────────────────────────────────────────
+static void ensure_entry_space(WINDOW* w, int& row, const char* title) {
+    int maxy = getmaxy(w);
+    if (row >= maxy - 4) {
+        wclear(w);
+        draw_border_title(w, title, C_HEADER);
+        wattron(w, COLOR_PAIR(C_NORMAL));
+        mvwprintw(w, 1, 2, "-- continued --");
+        wattroff(w, COLOR_PAIR(C_NORMAL));
+        row = 3;
+    }
+}
+
 // Print prompt on `row`, read input on `row+1`. Returns row after input.
-static std::string entry_prompt_str(WINDOW* w, int& row, const char* prompt) {
+static std::string entry_prompt_str(WINDOW* w, int& row, const char* prompt, const char* title,
+                                   bool digits_only = false,
+                                   const char* error_msg = "Please enter numbers only.") {
+    ensure_entry_space(w, row, title);
     wattron(w, COLOR_PAIR(C_NORMAL));
     mvwprintw(w, row++, 2, "%s", prompt);
     wattroff(w, COLOR_PAIR(C_NORMAL));
-    wattron(w, COLOR_PAIR(C_HIGHLIGHT));
-    mvwprintw(w, row, 2, "%-24s", "");   // clear input line
-    wmove(w, row, 2);
-    wrefresh(w);
-    echo();
+
+    std::string input;
+    const int max_len = 26;
+    int col = 2;
+    int input_row = row;
+    int error_row = std::min(getmaxy(w) - 2, input_row + 2);
     curs_set(1);
-    char buf[64] = {};
-    wgetnstr(w, buf, 32);
-    noecho();
-    wattroff(w, COLOR_PAIR(C_HIGHLIGHT));
-    row++;  // advance past input line
-    return std::string(buf);
+
+    while (true) {
+        // clear previous error line
+        mvwprintw(w, error_row, 2, "%*s", max_len, " ");
+
+        wattron(w, COLOR_PAIR(C_HIGHLIGHT));
+        mvwprintw(w, input_row, col, "%-*s", max_len, input.c_str());
+        wmove(w, input_row, col + input.size());
+        wattroff(w, COLOR_PAIR(C_HIGHLIGHT));
+        wrefresh(w);
+
+        int ch = wgetch(w);
+        if (ch == '\n' || ch == KEY_ENTER) {
+            if (digits_only && input.empty()) {
+                wattron(w, COLOR_PAIR(C_ASK) | A_BOLD);
+                mvwprintw(w, error_row, 2, "%s", error_msg);
+                wattroff(w, COLOR_PAIR(C_ASK) | A_BOLD);
+                wrefresh(w);
+                continue;
+            }
+            break;
+        }
+        if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {
+            if (!input.empty()) {
+                input.pop_back();
+            }
+            continue;
+        }
+        if (ch == KEY_UP || ch == KEY_DOWN || ch == KEY_LEFT || ch == KEY_RIGHT) {
+            continue;
+        }
+        if (digits_only) {
+            if (ch >= '0' && ch <= '9' && (int)input.size() < max_len) {
+                input.push_back((char)ch);
+            }
+            continue;
+        }
+        if (ch >= 32 && ch < 127 && std::isalnum(ch)) {
+            if ((int)input.size() < max_len) {
+                input.push_back((char)ch);
+            }
+        }
+    }
+
+    curs_set(0);
+    row++;
+    return input;
 }
 
-static int32_t entry_prompt_int(WINDOW* w, int& row, const char* prompt) {
-    std::string s = entry_prompt_str(w, row, prompt);
-    try { return std::stoi(s); } catch (...) { return 0; }
+static int32_t entry_prompt_int(WINDOW* w, int& row, const char* prompt, const char* title) {
+    std::string s = entry_prompt_str(w, row, prompt, title, true, "Please enter digits only.");
+    try {
+        return std::stoi(s);
+    } catch (...) {
+        return 0;
+    }
 }
 
 // "dropdown" / highlighted menu for input selection
@@ -281,17 +376,17 @@ static void flow_add(UIState& ui) {
     // price — only ask if not market
     int32_t price = 0;
     if (order_type == 1) {
-        price = entry_prompt_int(w, row, "Limit price (ticks):");
+        price = (int32_t)entry_prompt_int(w, row, "Limit price (ticks):", "ADD ORDER");
     }
 
     // stop price — only for stop/stop-limit
     int32_t stop_value = 0;
     if (order_type == 2 || order_type == 3) {
-        stop_value = entry_prompt_int(w, row, "Stop price (ticks):");
+        stop_value = (int32_t)entry_prompt_int(w, row, "Stop price (ticks):", "ADD ORDER");
     }
 
-    uint32_t qty = (uint32_t)entry_prompt_int(w, row, "Quantity:");
-    std::string ticker = entry_prompt_str(w, row, "Ticker:");
+    uint32_t qty = (uint32_t)entry_prompt_int(w, row, "Quantity:", "ADD ORDER");
+    std::string ticker = entry_prompt_str(w, row, "Ticker:", "ADD ORDER");
 
     // time in force
     int tif = entry_menu(w, row, "Time in force:", {"Day", "Good Till Cancel", "Fill or Kill"});
@@ -309,7 +404,8 @@ static void flow_add(UIState& ui) {
     msg.time_in_force = (uint8_t)tif;
     msg.fill_policy   = (uint8_t)fill;
     msg.stop_value    = stop_value;
-    strncpy(msg.ticker, ticker.c_str(), 8);
+    std::memset(msg.ticker, 0, sizeof(msg.ticker));
+    std::strncpy(msg.ticker, ticker.c_str(), sizeof(msg.ticker) - 1);
 
     write(ui.sock, &msg, sizeof(msg));
 
@@ -339,24 +435,27 @@ static void flow_add(UIState& ui) {
         }
 
         // update or insert history entry
-        // TODO: does not ALWAYS show partially filled, sometimes it doesn't even show filled
         bool found = false;
         std::string ticker = std::string(report.ticker, strnlen(report.ticker, 8));
+        OrderStatus report_status;
+        if (report.status == 'F' || report.remaining_qty == 0) {
+            report_status = OrderStatus::FILLED;
+        } else if (report.status == 'P' || report.fill_qty > 0) {
+            report_status = OrderStatus::PARTIALLY_FILLED;
+        } else {
+            report_status = OrderStatus::ACTIVE;
+        }
+
         for (auto& t : ui.history) {
             if (t.order_id == report.order_id) {
                 found = true;
-                if      (report.status == 'F') t.status = OrderStatus::FILLED;
-                else if (report.status == 'P') t.status = OrderStatus::PARTIALLY_FILLED;
-                else                           t.status = OrderStatus::ACTIVE;
+                t.status = report_status;
                 t.remaining_qty = report.remaining_qty;
                 t.updated_at = ts;
                 break;
             }
         }
         if (!found) {
-            OrderStatus os = (report.status == 'F') ? OrderStatus::FILLED :
-                             (report.status == 'P') ? OrderStatus::PARTIALLY_FILLED :
-                                                      OrderStatus::ACTIVE;
             ui.history.push_back({
                 report.order_id,
                 ticker,
@@ -368,7 +467,7 @@ static void flow_add(UIState& ui) {
                 msg.time_in_force,
                 msg.fill_policy,
                 msg.stop_value,
-                os,
+                report_status,
                 ts,
                 ts
             });
@@ -413,7 +512,7 @@ static void flow_cancel(UIState& ui) {
     }
     row++;  // blank line before prompt
 
-    uint32_t id = (uint32_t)entry_prompt_int(w, row, "Order ID to cancel:");
+    uint32_t id = (uint32_t)entry_prompt_int(w, row, "Order ID to cancel:", "CANCEL ORDER");
 
     OrderMessage msg{};
     msg.msg_type = 'C';
@@ -456,13 +555,14 @@ static void flow_modify(UIState& ui) {
         mvwprintw(w, row++, 2, "  ID=%-4u %-5s %s x%u",
                   id,
                   om.side == 0 ? "BUY" : "SELL",
+                  om.ticker,
                   price_str(om.price).c_str(),
                   om.quantity);
         if (row >= getmaxy(w) - 8) break;
     }
     row++;
 
-    uint32_t id = (uint32_t)entry_prompt_int(w, row, "Order ID to modify:");
+    uint32_t id = (uint32_t)entry_prompt_int(w, row, "Order ID to modify:", "MODIFY ORDER");
 
     auto it = ui.sent_orders.find(id);
     if (it == ui.sent_orders.end()) {
@@ -482,10 +582,10 @@ static void flow_modify(UIState& ui) {
     wattroff(w, COLOR_PAIR(C_HIGHLIGHT));
     row++;
 
-    int32_t new_price = entry_prompt_int(w, row, "New price (0=keep):");
+    int32_t new_price = entry_prompt_int(w, row, "New price (0=keep):", "MODIFY ORDER");
     if (new_price == 0) new_price = old.price;
 
-    int32_t new_qty = entry_prompt_int(w, row, "New qty (0=keep):");
+    int32_t new_qty = entry_prompt_int(w, row, "New qty (0=keep):", "MODIFY ORDER");
     if (new_qty == 0) new_qty = (int32_t)old.quantity;
 
     OrderMessage msg = old;
@@ -505,15 +605,18 @@ static void flow_modify(UIState& ui) {
     std::string ts = now_str();
     for (auto& t : ui.history) {
         if (t.order_id == report.order_id) {
+            // Update price and quantity for modified orders
+            t.price = new_price;
+            t.qty = (int)new_qty;
+            t.remaining_qty = report.remaining_qty;
+            t.updated_at = ts;
+            
             if (report.status == 'A') {
                 t.status = OrderStatus::ACTIVE;
-                t.updated_at = ts;
             } else if (report.status == 'P') {
                 t.status = OrderStatus::PARTIALLY_FILLED;
-                t.updated_at = ts;
             } else if (report.status == 'F') {
                 t.status = OrderStatus::FILLED;
-                t.updated_at = ts;
             } 
         }
     }
@@ -526,6 +629,7 @@ static void flow_modify(UIState& ui) {
         set_status(ui, "Modified ID=" + std::to_string(id));
     }
 }
+// TODO: when an order is modified, nothing changes in the history window, please fix that
 
 // ─── main ─────────────────────────────────────────────────────────────────────
 int main() {

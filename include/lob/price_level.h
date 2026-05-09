@@ -25,6 +25,8 @@ class PriceLevel {
     void setQuantity(int n) {quantity = n;}
 
     Price getPrice() {return price;}
+    
+    std::deque<Order>& getOrderQueue() {return order_queue;}
 
     Order& front();
     Order& find(int order_id);

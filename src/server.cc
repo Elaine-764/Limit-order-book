@@ -72,23 +72,48 @@ int main() {
             } else {
                 std::cout << "Filled orders found!" << "\n";
                 uint32_t count = static_cast<uint32_t>(fills.size());
+                
+                // Check if original order (new_id) was a FOK that got cancelled without filling
+                bool fok_cancelled = false;
+                if (msg.time_in_force == 2) { // FOK = 2
+                    if (!exchange.CheckIfOrderExists(new_id) && fills.empty()) {
+                        fok_cancelled = true;
+                        count = 1;
+                    }
+                }
+                
                 write(client_fd, &count, sizeof(count));
 
-                for (auto& f : fills) {
-                    std::cout << "fetching report status" << "\n";
-                    char status = exchange.CheckIfOrderExists(f.order_id) ? 'P' : 'F';
-                    std::cout << "Actual USERID: " << f.order_id << ", Report Status: " << status << "\n";
-                    uint32_t remaining_qty = exchange.CheckIfOrderExists(f.order_id) ? exchange.getRemainingQty(f.order_id) : 0;
+                if (fok_cancelled) {
+                    // Send FOK cancellation report
                     ExecutionReport report = buildReport(
-                        static_cast<uint32_t>(f.order_id),
-                        static_cast<uint8_t>(f.side),
-                        status,
-                        f.price,
-                        static_cast<uint32_t>(f.qty),
-                        remaining_qty,
+                        static_cast<uint32_t>(new_id),
+                        order.side,
+                        'C',  // Cancelled status
+                        0,
+                        0,
+                        0,
                         msg.ticker
                     );
                     write(client_fd, &report, sizeof(report));
+                    std::cout << "FOK Order " << new_id << " cancelled - no fill available\n";
+                } else {
+                    for (auto& f : fills) {
+                        std::cout << "fetching report status" << "\n";
+                        char status = exchange.CheckIfOrderExists(f.order_id) ? 'P' : 'F';
+                        std::cout << "Actual USERID: " << f.order_id << ", Report Status: " << status << "\n";
+                        uint32_t remaining_qty = exchange.CheckIfOrderExists(f.order_id) ? exchange.getRemainingQty(f.order_id) : 0;
+                        ExecutionReport report = buildReport(
+                            static_cast<uint32_t>(f.order_id),
+                            static_cast<uint8_t>(f.side),
+                            status,
+                            f.price,
+                            static_cast<uint32_t>(f.qty),
+                            remaining_qty,
+                            msg.ticker
+                        );
+                        write(client_fd, &report, sizeof(report));
+                    }
                 }
             }
         } else if (msg.msg_type == 'C') {
@@ -103,13 +128,13 @@ int main() {
             write(client_fd, &report, sizeof(report));
         } else if (msg.msg_type == 'M'){
             Order order = deserialize(msg);
-            int new_id = order.order_id;
-            std::vector<FillResult> fills = exchange.addOrder(order);
+            int order_id = order.order_id;
+            std::vector<FillResult> fills = exchange.modifyOrder(order_id, order);
             exchange.print();
 
             if (fills.empty()) {
                 ExecutionReport report = buildReport(
-                    static_cast<uint32_t>(new_id),
+                    static_cast<uint32_t>(order_id),
                     order.side,
                     'A',
                     0,
