@@ -1,121 +1,157 @@
-# Limit-order-book
+# Limit Order Book Engine
 
-A limit order book (LOB) matching engine with a TCP feed handler and terminal UI, written in C++20.
+A C++20 exchange-style limit order book and matching engine implementing price-time priority, common order types, fill policies, and time-in-force semantics.
 
-## Build
+> **Project status: v2 actively under development**
+>
+> This branch contains the new architecture currently being implemented. The original working implementation is preserved on [`main`](../../tree/main) and tagged as [`v1.0.0`](../../releases/tag/v1.0.0).
+
+## Overview
+
+This project implements an exchange-style limit order book and matching engine in modern C++.
+
+The v2 implementation is a ground-up architectural refactor of the original working implementation, with a focus on efficient order management, clean separation of responsibilities, testability, and measurable performance.
+
+## V2 Architecture
+
+The order book maintains separate bid and ask price levels using ordered maps:
+
+```text
+OrderBook
+├── Bid Price Levels
+│   └── PriceLevel
+│       └── Orders
+├── Ask Price Levels
+│   └── PriceLevel
+│       └── Orders
+└── Order ID Index
+    └── OrderLocation
+```
+
+Each resting order is stored in a linked list within its price level. An order-ID hash index stores the corresponding price level and list iterator.
+
+This allows cancellation to avoid searching through an entire price level:
+
+```text
+Order ID
+   ↓
+Hash Index
+   ↓
+OrderLocation
+   ↓
+PriceLevel + list iterator
+   ↓
+O(1) average-case erase
+```
+
+Price-level operations use ordered maps, providing `O(log n)` lookup/insertion/removal at the price-level layer.
+
+## Supported Order Types
+
+* Limit
+* Market
+* Stop
+* Stop-limit
+
+## Order Policies
+
+* Price-time priority
+* Fill-or-kill (FOK)
+* All-or-none (AON)
+* Good-for-day (DAY)
+* Good-til-cancelled (GTC)
+
+## Current Implementation Status
+
+### Complete
+
+* Core order value types
+* Order representation
+* Bid/ask price-level storage
+* Order ID indexing
+* Iterator-backed order locations
+* Order insertion
+* Order cancellation
+* Stop-order storage
+* Unit tests for core order-book components
+
+### In Progress
+
+* Matching engine
+* Market-order matching
+* Limit-order matching
+* Stop-order triggering
+* Stop-limit matching
+* Comprehensive matching-engine tests
+* Performance benchmarks
+
+## Complexity Goals
+
+| Operation                              | Target Complexity |
+| -------------------------------------- | ----------------: |
+| Price-level lookup                     |        `O(log n)` |
+| Price-level insertion/removal          |        `O(log n)` |
+| Order ID lookup                        |    `O(1)` average |
+| Order cancellation                     |    `O(1)` average |
+| Order modification across price levels |        `O(log n)` |
+
+## Why the Refactor?
+
+The original implementation used sequential order containers within each price level. While effective for basic matching, arbitrary order removal required searching within the container.
+
+The v2 design separates:
+
+1. **Price-level indexing** using ordered maps
+2. **Order sequencing** using linked lists
+3. **Direct order access** using a hash index
+
+This provides stable iterators for individual orders while preserving price-time ordering within each level.
+
+## Repository Structure
+
+```text
+include/       Public headers
+src/           Implementation
+tests/         Unit tests
+CMakeLists.txt Build configuration
+README.md      Documentation
+```
+
+## Building
+
+### Requirements
+
+* C++20-compatible compiler
+* CMake
+
+### Build
+
 ```bash
-mkdir build && cd build
-cmake ..
-make
+cmake -S . -B build
+cmake --build build
 ```
 
-## Run
-Start the server, then the client in a separate terminal:
+### Tests
+
 ```bash
-./lob_server   # terminal 1
-./lob_client   # terminal 2
-```
-The client UI supports adding, cancelling, and modifying orders via keyboard commands (A / C / M / Q), as per instructions upon client terminal startup.
-
-## Architecture
-```
-client (ncurses UI)
-      │  binary OrderMessage over TCP
-      ▼
-server (feed handler)
-      │  deserializes → Order
-      ▼
-Exchange
-      │  routes by ticker
-      ▼
-OrderBook (one per asset)
-      │  two std::maps (bids descending, asks ascending)
-      ▼
-PriceLevel → deque<Order>  (FIFO within price)
+ctest --test-dir build --output-on-failure
 ```
 
-**Key design decisions**
+## Progress Tracking
 
-- Prices stored as integer ticks (e.g. $100.23 → `10023`) — avoids floating point comparison issues and enables future flat array optimization
-- Two-map architecture: `std::map<Price, PriceLevel, std::greater>` for bids, `std::less` for asks — `begin()` is always best bid/ask, O(log n) insert/lookup
-- `order_index` (`unordered_map<id, {side, price}>`) in each OrderBook enables O(1) cancel without scanning price levels
-- `order_id_to_ticker` in Exchange enables cancel-by-id without requiring the client to specify a ticker
-- Fixed-size `OrderMessage` struct over TCP — same approach as NASDAQ ITCH, read exactly `sizeof(OrderMessage)` bytes per message
-- Matching engine separated from network layer — OrderBook has no knowledge of sockets or serialization
+* [x] Refactor project structure
+* [x] Implement core order-book data structures
+* [x] Implement direct order indexing
+* [x] Implement cancellation
+* [x] Add unit tests
+* [ ] Implement matching engine
+* [ ] Add comprehensive matching tests
+* [ ] Add benchmarks
+* [ ] Analyze performance and data-structure tradeoffs
+* [ ] Merge v2 into `main`
 
-**Order types supported:** limit, market, stop, stop-limit  
-**Time-in-force:** GTC, day  
-**Fill policies:** normal, FOK, AON
+## Stable Baseline
 
-## Potential improvements
+The original implementation remains available on [`main`](../../tree/main) and is tagged [`v1.0.0`](../../releases/tag/v1.0.0).
 
-- Replace `std::map` with a sorted flat array or skip list for better cache performance
-- Pool allocator for Order objects to avoid per-order heap allocation
-- Atomic order IDs for thread safety
-- Broadcast book snapshots after each match so the client UI reflects live book state
-
-# Tests
-
-## Basic Matching
-- buy 10 of AAPL @ 100, sell 10 of AAPL @ 100 → exact fill, both orders gone
-- buy 10 of AAPL @ 101, sell 10 of AAPL @ 100 → fill at ask price ($100), aggressor pays passive price
-- buy 10 of AAPL @ 100, sell 10 of AAPL @ 101 → no fill, both rest in book
-- reverse all of the above (sell first, then buy as aggressor)
-
-## Partial Fills
-- buy 10, sell 3 → bid partially filled (7 remaining), ask fully filled
-- buy 3, sell 10 → bid fully filled, ask partially filled (7 remaining)
-- buy 10, sell 3, sell 3, sell 4 → three separate fills drain the bid completely
-- buy 3 @ 100, buy 5 @ 100, sell 10 @ 100 → two bids at same level filled in time order (FIFO)
-
-## Price Priority
-- buy 5 @ 101, buy 5 @ 100, sell 10 @ 99 → higher bid (101) fills first, then 100
-- sell 5 @ 99, sell 5 @ 100, buy 10 @ 101 → lower ask (99) fills first, then 100
-
-## Time Priority (FIFO within price level)
-- buy 5 @ 100 (order A), buy 5 @ 100 (order B), sell 3 @ 100
-  → order A fills 3, order B untouched (A was first)
-- buy 5 @ 100 (order A), buy 5 @ 100 (order B), sell 8 @ 100
-  → order A fills completely (5), order B fills 3
-
-## Cancel
-- add order, cancel it → order gone from book, spread/qty updates
-- cancel order that doesn't exist → graceful error, no crash
-- cancel already-filled order → graceful error
-- add 3 orders at same price level, cancel middle one → remaining two still fill correctly
-
-## Modify
-- modify price down (bid): order keeps queue position, no fill
-- modify price up (bid): order moves to new level, loses queue position
-- modify qty decrease: order keeps queue position
-- modify qty increase: order loses queue position (cancel + reinsert)
-- modify to a price that crosses the spread → should trigger immediate fill
-- modify order that doesn't exist → graceful error
-
-## Multiple Price Levels
-- bids @ 101, 100, 99 — sell enough to drain 101 completely, partial fill at 100
-  → 101 level erased, 100 level partially filled, 99 untouched
-- verify spread updates correctly after each fill
-
-## Multiple Tickers
-- buy AAPL @ 100, buy MSFT @ 200 — sell AAPL @ 99 → only AAPL matches, MSFT untouched
-- orders for AAPL and MSFT at same price → no cross-ticker matching
-
-## Edge Cases
-- buy 0 quantity → reject or handle gracefully
-- buy at price 0 → reject or handle gracefully  
-- add 1000 orders at same price level → all queue correctly, fill in order
-- buy exactly matches ask on multiple levels simultaneously
-- empty book: cancel, modify, get spread → all handle gracefully without crash
-- two clients sending orders simultaneously (if you support multiple connections)
-
-## FOK / AON (if implemented)
-- FOK buy 10, book only has 8 available → entire order cancelled, nothing fills
-- FOK buy 10, book has exactly 10 → fills completely
-- AON buy 10, book has 8 → order rests but does not partially fill
-- AON buy 10, book accumulates to 10 → fills completely
-
-## Stop Orders (if implemented)  
-- place stop sell @ 95, market trades at 96, 95 → stop triggers at 95
-- place stop sell @ 95, market never reaches 95 → stop never triggers
-- stop limit: triggers but limit not reachable → rests in book at limit price
+The stable implementation is intentionally preserved as a baseline for comparison and regression testing while v2 is developed.
