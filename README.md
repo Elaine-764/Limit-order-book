@@ -1,121 +1,126 @@
-# Limit-order-book
+# Limit Order Book Engine
 
-A limit order book (LOB) matching engine with a TCP feed handler and terminal UI, written in C++20.
+A C++20 exchange-style limit order book and matching engine implementing price-time priority, common order types, fill policies, and time-in-force semantics.
 
-## Build
+> **Project status:** A new v2 architecture is currently under active development.
+>
+> **This `main` branch contains the stable, working v1 implementation.**
+> The new implementation is being developed separately on [`v2-development`](../../tree/v2-development).
+>
+> **[→ View the new v2 implementation](../../tree/v2-development)**
+
+## Overview
+
+This project implements an exchange-style limit order book and matching engine in modern C++.
+
+The original v1 implementation provides a working baseline for order management and matching. The v2 implementation is a substantial architectural refactor focused on improving order storage, cancellation efficiency, testability, and overall system design.
+
+## Implemented in v1
+
+* Limit orders
+* Market orders
+* Stop orders
+* Stop-limit orders
+* Price-time priority
+* Fill-or-kill (FOK) orders
+* All-or-none (AON) orders
+* Good-for-day (DAY) time-in-force
+* Good-til-cancelled (GTC) time-in-force
+* Bid/ask price levels
+* Order cancellation and lookup
+
+## V2 Development
+
+The v2 implementation is being rebuilt around more efficient order-management data structures.
+
+Current architectural work includes:
+
+* Ordered price levels for bid/ask books
+* Linked-list order storage within price levels
+* Iterator-backed order locations
+* Hash-based order ID indexing
+* Dedicated stop-order storage
+* Unit testing for core order-book components
+* Cleaner separation between order management and matching logic
+
+The goal is to support:
+
+* `O(log n)` price-level operations
+* `O(1)` average-case order lookup
+* `O(1)` average-case order cancellation once the order location is indexed
+
+The v2 matching engine and additional tests are currently under development.
+
+## Repository Structure
+
+The stable `main` branch and active `v2-development` branch represent two stages of the project.
+
+```text
+main
+└── Stable v1 implementation
+
+v2-development
+└── Refactored v2 implementation
+```
+
+Once complete, v2 will replace v1 as the primary implementation.
+
+## Why v2?
+
+The v1 implementation uses a simpler architecture intended to establish
+correct matching and order-management semantics.
+
+The v2 refactor addresses limitations in the original design by introducing
+explicit data structures for price levels, order locations, and stop orders.
+The primary goals are improved cancellation complexity, clearer ownership and
+responsibilities, stronger unit-test coverage, and a foundation for
+performance benchmarking.
+
+## Building
+
+### Requirements
+
+* C++20-compatible compiler
+* CMake
+
+### Build
+
 ```bash
-mkdir build && cd build
-cmake ..
-make
+cmake -S . -B build
+cmake --build build
 ```
 
-## Run
-Start the server, then the client in a separate terminal:
+### Tests
+
 ```bash
-./lob_server   # terminal 1
-./lob_client   # terminal 2
-```
-The client UI supports adding, cancelling, and modifying orders via keyboard commands (A / C / M / Q), as per instructions upon client terminal startup.
-
-## Architecture
-```
-client (ncurses UI)
-      │  binary OrderMessage over TCP
-      ▼
-server (feed handler)
-      │  deserializes → Order
-      ▼
-Exchange
-      │  routes by ticker
-      ▼
-OrderBook (one per asset)
-      │  two std::maps (bids descending, asks ascending)
-      ▼
-PriceLevel → deque<Order>  (FIFO within price)
+ctest --test-dir build --output-on-failure
 ```
 
-**Key design decisions**
+## Design Goals
 
-- Prices stored as integer ticks (e.g. $100.23 → `10023`) — avoids floating point comparison issues and enables future flat array optimization
-- Two-map architecture: `std::map<Price, PriceLevel, std::greater>` for bids, `std::less` for asks — `begin()` is always best bid/ask, O(log n) insert/lookup
-- `order_index` (`unordered_map<id, {side, price}>`) in each OrderBook enables O(1) cancel without scanning price levels
-- `order_id_to_ticker` in Exchange enables cancel-by-id without requiring the client to specify a ticker
-- Fixed-size `OrderMessage` struct over TCP — same approach as NASDAQ ITCH, read exactly `sizeof(OrderMessage)` bytes per message
-- Matching engine separated from network layer — OrderBook has no knowledge of sockets or serialization
+The project is intended as a learning-focused implementation of exchange-style order-book infrastructure, with particular emphasis on:
 
-**Order types supported:** limit, market, stop, stop-limit  
-**Time-in-force:** GTC, day  
-**Fill policies:** normal, FOK, AON
+* Data-structure selection
+* Matching semantics
+* Algorithmic complexity
+* Order lifecycle management
+* Testability
+* Performance measurement
 
-## Potential improvements
+The v2 refactor is being developed incrementally so that architectural changes can be tested against a stable working baseline.
 
-- Replace `std::map` with a sorted flat array or skip list for better cache performance
-- Pool allocator for Order objects to avoid per-order heap allocation
-- Atomic order IDs for thread safety
-- Broadcast book snapshots after each match so the client UI reflects live book state
+## Development History
 
-# Tests
+### v1 — Stable
 
-## Basic Matching
-- buy 10 of AAPL @ 100, sell 10 of AAPL @ 100 → exact fill, both orders gone
-- buy 10 of AAPL @ 101, sell 10 of AAPL @ 100 → fill at ask price ($100), aggressor pays passive price
-- buy 10 of AAPL @ 100, sell 10 of AAPL @ 101 → no fill, both rest in book
-- reverse all of the above (sell first, then buy as aggressor)
+The original implementation established the core order-book and matching-engine functionality.
 
-## Partial Fills
-- buy 10, sell 3 → bid partially filled (7 remaining), ask fully filled
-- buy 3, sell 10 → bid fully filled, ask partially filled (7 remaining)
-- buy 10, sell 3, sell 3, sell 4 → three separate fills drain the bid completely
-- buy 3 @ 100, buy 5 @ 100, sell 10 @ 100 → two bids at same level filled in time order (FIFO)
+### v2 — In Development
 
-## Price Priority
-- buy 5 @ 101, buy 5 @ 100, sell 10 @ 99 → higher bid (101) fills first, then 100
-- sell 5 @ 99, sell 5 @ 100, buy 10 @ 101 → lower ask (99) fills first, then 100
+The current refactor focuses on improving the underlying data structures and order-management architecture before extending and benchmarking the matching engine.
 
-## Time Priority (FIFO within price level)
-- buy 5 @ 100 (order A), buy 5 @ 100 (order B), sell 3 @ 100
-  → order A fills 3, order B untouched (A was first)
-- buy 5 @ 100 (order A), buy 5 @ 100 (order B), sell 8 @ 100
-  → order A fills completely (5), order B fills 3
+---
 
-## Cancel
-- add order, cancel it → order gone from book, spread/qty updates
-- cancel order that doesn't exist → graceful error, no crash
-- cancel already-filled order → graceful error
-- add 3 orders at same price level, cancel middle one → remaining two still fill correctly
+## License
 
-## Modify
-- modify price down (bid): order keeps queue position, no fill
-- modify price up (bid): order moves to new level, loses queue position
-- modify qty decrease: order keeps queue position
-- modify qty increase: order loses queue position (cancel + reinsert)
-- modify to a price that crosses the spread → should trigger immediate fill
-- modify order that doesn't exist → graceful error
-
-## Multiple Price Levels
-- bids @ 101, 100, 99 — sell enough to drain 101 completely, partial fill at 100
-  → 101 level erased, 100 level partially filled, 99 untouched
-- verify spread updates correctly after each fill
-
-## Multiple Tickers
-- buy AAPL @ 100, buy MSFT @ 200 — sell AAPL @ 99 → only AAPL matches, MSFT untouched
-- orders for AAPL and MSFT at same price → no cross-ticker matching
-
-## Edge Cases
-- buy 0 quantity → reject or handle gracefully
-- buy at price 0 → reject or handle gracefully  
-- add 1000 orders at same price level → all queue correctly, fill in order
-- buy exactly matches ask on multiple levels simultaneously
-- empty book: cancel, modify, get spread → all handle gracefully without crash
-- two clients sending orders simultaneously (if you support multiple connections)
-
-## FOK / AON (if implemented)
-- FOK buy 10, book only has 8 available → entire order cancelled, nothing fills
-- FOK buy 10, book has exactly 10 → fills completely
-- AON buy 10, book has 8 → order rests but does not partially fill
-- AON buy 10, book accumulates to 10 → fills completely
-
-## Stop Orders (if implemented)  
-- place stop sell @ 95, market trades at 96, 95 → stop triggers at 95
-- place stop sell @ 95, market never reaches 95 → stop never triggers
-- stop limit: triggers but limit not reachable → rests in book at limit price
+MIT License. See [LICENSE](LICENSE) for details.
