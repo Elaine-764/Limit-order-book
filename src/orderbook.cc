@@ -34,31 +34,84 @@ void OrderBook::addRestingOrder(Order order, Side side) {
     order_index_.try_emplace(order.order_id, side, pricelevel, it);
 }
 
-bool OrderBook::cancel(OrderId order_id) {
+bool OrderBook::cancel(OrderId order_id, std::vector<ExecutionReport>& reports) {
     // find OrderLocation
     auto order_it = order_index_.find(order_id);
     if (order_it != order_index_.end()) {
         // remove order from bid/ask
-        OrderLocation location = order_it->second;
-        Side side = location.side;
-        PriceLevel* level = location.level;
-        level->removeOrder(location.order_it);
-        // remove from order_index_
-        order_index_.erase(order_it);
+        OrderLocation& loc = order_it->second;
+        PriceLevel* level = loc.level;
 
+        Qty canceled_qty = loc.order_it->quantity;
+        level->removeOrder(loc.order_it);
+        reports.push_back(ExecutionReport{
+                order_id,
+                ExecutionType::CANCELED,
+                canceled_qty,
+                level->getPrice(),
+                std::vector<Fill>{}
+            });
+    
         // check if any orders remain at this price level, if not, remove
         if (level->isEmpty()) {
-            if (side == Side::BUY) {
+            if (loc.side == Side::BUY) {
                 bids_.erase(level->getPrice());
             } else {
                 asks_.erase(level->getPrice());
             }
         }
+
+        // remove from order_index_
+        order_index_.erase(order_it);
     } else {
         // give error message
         std::cerr << "WARNING: Cancel failed. OrderId " << order_id.get() << " not found.\n";
         return false;
     }
+    return true;
+}
+
+const Order* OrderBook::findOrder(const OrderId order_id) const {
+    auto it = order_index_.find(order_id);
+    if (it == order_index_.end()) {
+        return nullptr;
+    }
+    const OrderLocation& loc = it->second;
+    return &(*loc.order_it);
+}
+
+bool OrderBook::modify(const ModifyRequest& req, std::vector<ExecutionReport>& reports, MatchingEngine& engine, StopOrderBook& stop_book) {
+    auto index_it = order_index_.find(req.order_id);
+    if (index_it == order_index_.end()) return false;
+
+    OrderLocation& loc = index_it->second;
+    PriceLevel* level = loc.level;
+    auto order_it = loc.order_it;
+
+    // if price is unchanged and quantity decreased 
+    if (level->getPrice() == req.new_price && req.new_quantity < order_it->quantity) {
+        Qty diff = order_it->quantity - req.new_quantity;
+        order_it->quantity -= diff;
+        level->adjustQty(-diff);
+        reports.push_back(ExecutionReport{
+            req.order_id, 
+            ExecutionType::PARTIALLY_FILLED, // Standard protocol for size adjustment
+            req.new_quantity, 
+            req.new_price, 
+            {}
+        });
+        return true;
+    }
+    Order backup_order = *order_it;
+    backup_order.price = req.new_price;
+    backup_order.quantity = req.new_quantity;
+
+    this->cancel(req.order_id, reports);
+
+    // resubmit an order
+    std::vector<ExecutionReport> match_reports = engine.submitOrder(std::move(backup_order), *this, stop_book);
+
+    reports.insert(reports.end(), match_reports.begin(), match_reports.end());
     return true;
 }
 

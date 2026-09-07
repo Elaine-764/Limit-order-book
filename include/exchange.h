@@ -8,9 +8,10 @@
 class SymbolTable {
   private:
     std::unordered_map<std::string, std::uint32_t> to_id_;
-    std::vector<std::string> to_name;
+    std::vector<std::string> to_name_;
   public:
     std::uint32_t intern(const std::string& ticker);
+    std::uint32_t intern(std::string&& ticker);
     const std::string& name(std::utin32_t id) const;
 };
 
@@ -21,5 +22,8 @@ class Exchange {
     SymbolTable symbols_;
     MatchingEngine engine_;
   public:
-    std::vector<Fill> submitOrder(Order);
+    std::vector<ExecutionReport> submitOrder(Order order);
+    std::vector<ExecutionReport> cancelOrder(CancelRequest req);
+    std::vector<ExecutionReport> modifyOrder(const ModifyRequest& req);
+
 };

@@ -40,5 +40,12 @@ struct OrderIdHash {
 
 enum Side { BUY = 0, SELL = 1};
 enum OrderType { MARKET = 0, LIMIT, STOP, STOP_LIMIT };
-enum TimeInForce { NONE = 0, DAY, GOOD_TIL_CANCELLED, FILL_OR_KILL };
+enum TimeInForce { NONE = 0, DAY, GOOD_TIL_CANCELLED, IMMEDIATE_OR_CANCEL };
 enum FillPolicy { NORMAL, ALL_OR_NONE };
+
+enum class ExecutionType {
+  FILLED = 0,
+  PARTIALLY_FILLED,
+  CANCELED, // Used when Market orders run out of liquidity
+  REJECTED}
+;

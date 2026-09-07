@@ -17,11 +17,12 @@ class PriceLevel {
     void removeOrder(std::list<Order>::iterator it);
     Price getPrice() const { return price_; }
     Qty getQty() const { return total_qty_; }
+    void adjustQty(Qty new_qty) { total_qty_ += new_qty; }
     bool isEmpty() const { return orders_.empty(); } 
     // for viewing FIFO behavior
     const Order& front() const { return orders_.front(); }
-    std::list<Order>::const_iterator begin() const { return orders_.cbegin(); }
-    std::list<Order>::const_iterator end() const { return orders_.cend(); }
+    std::list<Order>::iterator begin() const { return orders_.begin(); }
+    std::list<Order>::iterator end() const { return orders_.end(); }
 
 };
 
@@ -38,8 +39,12 @@ class OrderBook {
     std::map<Price, PriceLevel, std::less<Price>> asks_;
     std::unordered_map<OrderId, OrderLocation, OrderIdHash> order_index_;
   public:
+    auto& getAsks() { return asks_; }
+    auto& getBids() { return bids_; }
     void addRestingOrder(Order order, Side side);
-    bool cancel(OrderId order_id);
+    const Order* findOrder(const Order order_id) const;
+    bool cancel(OrderId order_id, std::vector<ExecutionReport>& reports);
+    bool modify(const ModifyRequest& req, std::vector<ExecutionReport>& reports, MatchingEngine& engine, StopOrderBook& stop_book);
     std::uint32_t getTickerId() const { return ticker_id; }
 
     // for observability
@@ -63,6 +68,7 @@ class OrderBook {
     }
     std::size_t bidLevelCount() const { return bids_.size(); }
     std::size_t askLevelCount() const { return asks_.size(); }
+
 };
 
 class StopOrderBook {

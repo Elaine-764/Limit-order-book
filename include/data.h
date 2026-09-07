@@ -24,3 +24,23 @@ struct Fill {
   Qty quantity;
   std::chrono::steady_clock::time_point timestamp;
 };
+
+struct ExecutionReport {
+  OrderId order_id;
+  ExecutionType type;
+  Qty quantity_remaining;
+  Price price;
+  std::vector<Fill> fills;
+};
+
+struct CancelRequests {
+  OrderId order_id;
+  std::uint32_t ticker_id;
+}
+
+struct ModifyRequest {
+    OrderId order_id;
+    std::uint32_t ticker_id;
+    Price new_price;
+    Qty new_quantity;
+};
