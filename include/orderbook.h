@@ -6,6 +6,8 @@
 #include "data.h"
 #include "types.h"
 
+class Exchange;
+
 class PriceLevel {
     Price price_;
     std::list<Order> orders_;
@@ -21,8 +23,10 @@ class PriceLevel {
     bool isEmpty() const { return orders_.empty(); } 
     // for viewing FIFO behavior
     const Order& front() const { return orders_.front(); }
-    std::list<Order>::iterator begin() const { return orders_.begin(); }
-    std::list<Order>::iterator end() const { return orders_.end(); }
+    std::list<Order>::iterator begin() { return orders_.begin(); }
+    std::list<Order>::iterator end() { return orders_.end(); }
+    std::list<Order>::const_iterator cbegin() const { return orders_.cbegin(); }
+    std::list<Order>::const_iterator cend() const { return orders_.cend(); }
 
 };
 
@@ -42,9 +46,10 @@ class OrderBook {
     auto& getAsks() { return asks_; }
     auto& getBids() { return bids_; }
     void addRestingOrder(Order order, Side side);
-    const Order* findOrder(const Order order_id) const;
+    const Order* findOrder(const OrderId order_id) const;
     bool cancel(OrderId order_id, std::vector<ExecutionReport>& reports);
-    bool modify(const ModifyRequest& req, std::vector<ExecutionReport>& reports, MatchingEngine& engine, StopOrderBook& stop_book);
+    bool modify(const ModifyRequest& req, std::vector<ExecutionReport>& reports, Exchange& exchange);
+    bool removeFilledOrder(OrderId order_id);
     std::uint32_t getTickerId() const { return ticker_id; }
 
     // for observability
@@ -69,13 +74,30 @@ class OrderBook {
     std::size_t bidLevelCount() const { return bids_.size(); }
     std::size_t askLevelCount() const { return asks_.size(); }
 
+    void purgeDayOrders(std::vector<ExecutionReport>& cancellations) noexcept;
+
 };
 
 class StopOrderBook {
   private:
     std::multimap<Price, Order> buy_stops_;
     std::multimap<Price, Order> sell_stops_;
+    
+    struct StopLocation {
+      Side side;
+      std::multimap<Price, Order>::iterator it;
+    };
+    std::unordered_map<OrderId, StopLocation, OrderIdHash> stop_index_;
+
   public:
     void add(Order order);
+    bool cancel(OrderId order_id, std::vector<ExecutionReport>& reports);
     std::vector<Order> triggerUpTo(Price last_trade_price);
+    bool modify(const ModifyRequest& req, std::vector<ExecutionReport>& reports, Exchange& exchange);
+    void purgeDayOrders(std::vector<ExecutionReport>& cancellations) noexcept;
+
+    [[nodiscard]] bool contains(OrderId order_id) const noexcept {
+      return stop_index_.contains(order_id);
+    }
+
 };

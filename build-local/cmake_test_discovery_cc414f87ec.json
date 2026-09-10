@@ -1,0 +1,307 @@
+{
+  "tests": 53,
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "PriceLevelTest",
+      "tests": 11,
+      "testsuite": [
+        {
+          "name": "DefaultConstructorStartsEmptyWithZeroQty",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 7
+        },
+        {
+          "name": "PriceConstructorSetsPriceAndStartsEmpty",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 13
+        },
+        {
+          "name": "AddOrderIncreasesQtyAndClearsEmpty",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 20
+        },
+        {
+          "name": "MultipleAddOrdersAccumulateQty",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 28
+        },
+        {
+          "name": "AddOrderReturnsIteratorToJustInsertedOrder",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 37
+        },
+        {
+          "name": "RemoveOrderDecreasesQtyByThatOrdersAmount",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 46
+        },
+        {
+          "name": "RemoveMiddleOrderLeavesOthersIntact",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 57
+        },
+        {
+          "name": "RemovingLastOrderMakesLevelEmpty",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 72
+        },
+        {
+          "name": "RemovingAllOrdersOneByOneLeavesConsistentQty",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 82
+        },
+        {
+          "name": "OrdersPreserveFifoInsertionOrder",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 95
+        },
+        {
+          "name": "FifoOrderSurvivesAMiddleRemoval",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_price_level.cc",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "name": "OrderBookTest",
+      "tests": 12,
+      "testsuite": [
+        {
+          "name": "RestingBuyOrderBecomesBestBid",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 12
+        },
+        {
+          "name": "RestingSellOrderBecomesBestAsk",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 18
+        },
+        {
+          "name": "BidsOrderedHighestFirst",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 24
+        },
+        {
+          "name": "AsksOrderedLowestFirst",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 32
+        },
+        {
+          "name": "MultipleOrdersAtSamePriceAccumulateQty",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 40
+        },
+        {
+          "name": "CancelRemovesOrderFromIndex",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 48
+        },
+        {
+          "name": "CancelingOnlyOrderAtPriceRemovesTheLevel",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 59
+        },
+        {
+          "name": "CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 68
+        },
+        {
+          "name": "EmptyingBestPriceRevealsNextBestBid",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 81
+        },
+        {
+          "name": "CancelingUnknownOrderIdReturnsFalseNotCrash",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 91
+        },
+        {
+          "name": "CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 96
+        },
+        {
+          "name": "BidsAndAsksAreIndependent",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_order_book.cc",
+          "line": 104
+        }
+      ]
+    },
+    {
+      "name": "StopOrderBookTest",
+      "tests": 9,
+      "testsuite": [
+        {
+          "name": "EmptyBookTriggersNothing",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 7
+        },
+        {
+          "name": "BuyStopTriggersWhenPriceRisesToItsStopPrice",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 13
+        },
+        {
+          "name": "BuyStopDoesNotTriggerBelowItsStopPrice",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 25
+        },
+        {
+          "name": "OnlyBuyStopsAtOrBelowLastTradeTrigger",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 34
+        },
+        {
+          "name": "SellStopTriggersWhenPriceFallsToItsStopPrice",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 45
+        },
+        {
+          "name": "SellStopDoesNotTriggerAbovePriceItsStopPrice",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 55
+        },
+        {
+          "name": "OnlySellStopsAtOrAboveLastTradeTrigger",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 64
+        },
+        {
+          "name": "TriggeredOrdersAreConsumedNotReTriggered",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 75
+        },
+        {
+          "name": "BuyAndSellStopsAreIndependent",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_stop_order_book.cc",
+          "line": 86
+        }
+      ]
+    },
+    {
+      "name": "SymbolTableTest",
+      "tests": 6,
+      "testsuite": [
+        {
+          "name": "InternNewTickerReturnsUniqueId",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_symbol_table.cc",
+          "line": 16
+        },
+        {
+          "name": "InternExistingTickerReturnsSameId",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_symbol_table.cc",
+          "line": 28
+        },
+        {
+          "name": "InternRValueOverloadStealsMemory",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_symbol_table.cc",
+          "line": 41
+        },
+        {
+          "name": "NameLookupReturnsCorrectStringReference",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_symbol_table.cc",
+          "line": 61
+        },
+        {
+          "name": "NameLookupIsZeroCopyReference",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_symbol_table.cc",
+          "line": 73
+        },
+        {
+          "name": "NameLookupOnInvalidIdReturnsSafeEmptyString",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_symbol_table.cc",
+          "line": 88
+        }
+      ]
+    },
+    {
+      "name": "MatchingEngineCurrentTest",
+      "tests": 8,
+      "testsuite": [
+        {
+          "name": "LimitOrderMatchesAtPriceTimePriority",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_matching_engine_v2.cc",
+          "line": 7
+        },
+        {
+          "name": "MarketOrderSweepsMultipleLevelsAndCancelsRemainder",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_matching_engine_v2.cc",
+          "line": 30
+        },
+        {
+          "name": "IOCLimitCancelsOnlyUnfilledRemainder",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_matching_engine_v2.cc",
+          "line": 49
+        },
+        {
+          "name": "FOKRejectsWithoutConsumingInsufficientLiquidity",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_matching_engine_v2.cc",
+          "line": 69
+        },
+        {
+          "name": "AllOrNoneLimitRejectsWithoutConsumingLiquidity",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_matching_engine_v2.cc",
+          "line": 88
+        },
+        {
+          "name": "UnfilledGTCOrderRestsInBook",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_matching_engine_v2.cc",
+          "line": 105
+        },
+        {
+          "name": "BuyStopTriggersAndIsRemovedFromStopBook",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_matching_engine_v2.cc",
+          "line": 120
+        },
+        {
+          "name": "SellStopsTriggerForPricesAtOrBelowTheirThreshold",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_matching_engine_v2.cc",
+          "line": 140
+        }
+      ]
+    },
+    {
+      "name": "ExchangeCurrentTest",
+      "tests": 7,
+      "testsuite": [
+        {
+          "name": "LazilyCreatesBookAndCancelsRestingOrder",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_exchange_v2.cc",
+          "line": 6
+        },
+        {
+          "name": "MarketOrderWithZeroPriceIsAccepted",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_exchange_v2.cc",
+          "line": 20
+        },
+        {
+          "name": "InvalidQuantityAndLimitPriceAreRejected",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_exchange_v2.cc",
+          "line": 35
+        },
+        {
+          "name": "QuantityReductionModificationPreservesOrder",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_exchange_v2.cc",
+          "line": 49
+        },
+        {
+          "name": "EndOfDayCancelsDayOrdersButKeepsGTCOrders",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_exchange_v2.cc",
+          "line": 61
+        },
+        {
+          "name": "EndOfDayCancelsDayStopOrders",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_exchange_v2.cc",
+          "line": 80
+        },
+        {
+          "name": "UnknownCancelAndModifyAreRejected",
+          "file": "\/Users\/lijing\/Desktop\/Personal\/Coding\/Quant\/limit_order_book\/tests\/test_exchange_v2.cc",
+          "line": 93
+        }
+      ]
+    }
+  ]
+}

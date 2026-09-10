@@ -16,6 +16,10 @@ inline Order makeOrder(
     std::uint32_t ticker_id = 1
 ) {
     auto now = std::chrono::steady_clock::now();
+    if (stop_price == Price{0} &&
+        (type == OrderType::STOP || type == OrderType::STOP_LIMIT)) {
+        stop_price = price;
+    }
     return Order{
         .order_id   = OrderId{id},
         .ticker_id  = ticker_id,

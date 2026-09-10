@@ -33,10 +33,10 @@ struct ExecutionReport {
   std::vector<Fill> fills;
 };
 
-struct CancelRequests {
+struct CancelRequest {
   OrderId order_id;
   std::uint32_t ticker_id;
-}
+};
 
 struct ModifyRequest {
     OrderId order_id;

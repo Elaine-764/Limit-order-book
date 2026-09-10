@@ -1,7 +1,10 @@
 #pragma once
 
-#include "orderbook.h"
+#include "data.h"
 #include <vector>
+
+class OrderBook;
+class StopOrderBook;
 
 class MatchingEngine {
   public:

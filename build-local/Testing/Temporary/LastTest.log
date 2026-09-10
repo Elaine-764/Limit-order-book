@@ -1,0 +1,1438 @@
+Start testing: Sep 09 21:37 EDT
+----------------------------------------------------------
+1/53 Testing: PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty
+1/53 Test: PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty
+[       OK ] PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty" end time: Sep 09 21:37 EDT
+"PriceLevelTest.DefaultConstructorStartsEmptyWithZeroQty" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/53 Testing: PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty
+2/53 Test: PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty
+[       OK ] PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty" end time: Sep 09 21:37 EDT
+"PriceLevelTest.PriceConstructorSetsPriceAndStartsEmpty" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/53 Testing: PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty
+3/53 Test: PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty
+[       OK ] PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty" end time: Sep 09 21:37 EDT
+"PriceLevelTest.AddOrderIncreasesQtyAndClearsEmpty" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/53 Testing: PriceLevelTest.MultipleAddOrdersAccumulateQty
+4/53 Test: PriceLevelTest.MultipleAddOrdersAccumulateQty
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.MultipleAddOrdersAccumulateQty" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.MultipleAddOrdersAccumulateQty" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.MultipleAddOrdersAccumulateQty
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.MultipleAddOrdersAccumulateQty
+[       OK ] PriceLevelTest.MultipleAddOrdersAccumulateQty (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.MultipleAddOrdersAccumulateQty" end time: Sep 09 21:37 EDT
+"PriceLevelTest.MultipleAddOrdersAccumulateQty" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/53 Testing: PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder
+5/53 Test: PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder
+[       OK ] PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder" end time: Sep 09 21:37 EDT
+"PriceLevelTest.AddOrderReturnsIteratorToJustInsertedOrder" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/53 Testing: PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount
+6/53 Test: PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount
+[       OK ] PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount" end time: Sep 09 21:37 EDT
+"PriceLevelTest.RemoveOrderDecreasesQtyByThatOrdersAmount" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/53 Testing: PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact
+7/53 Test: PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact
+[       OK ] PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact" end time: Sep 09 21:37 EDT
+"PriceLevelTest.RemoveMiddleOrderLeavesOthersIntact" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/53 Testing: PriceLevelTest.RemovingLastOrderMakesLevelEmpty
+8/53 Test: PriceLevelTest.RemovingLastOrderMakesLevelEmpty
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.RemovingLastOrderMakesLevelEmpty" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.RemovingLastOrderMakesLevelEmpty" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.RemovingLastOrderMakesLevelEmpty
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.RemovingLastOrderMakesLevelEmpty
+[       OK ] PriceLevelTest.RemovingLastOrderMakesLevelEmpty (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.RemovingLastOrderMakesLevelEmpty" end time: Sep 09 21:37 EDT
+"PriceLevelTest.RemovingLastOrderMakesLevelEmpty" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/53 Testing: PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty
+9/53 Test: PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty
+[       OK ] PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty" end time: Sep 09 21:37 EDT
+"PriceLevelTest.RemovingAllOrdersOneByOneLeavesConsistentQty" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/53 Testing: PriceLevelTest.OrdersPreserveFifoInsertionOrder
+10/53 Test: PriceLevelTest.OrdersPreserveFifoInsertionOrder
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.OrdersPreserveFifoInsertionOrder" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.OrdersPreserveFifoInsertionOrder" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.OrdersPreserveFifoInsertionOrder
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.OrdersPreserveFifoInsertionOrder
+[       OK ] PriceLevelTest.OrdersPreserveFifoInsertionOrder (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.OrdersPreserveFifoInsertionOrder" end time: Sep 09 21:37 EDT
+"PriceLevelTest.OrdersPreserveFifoInsertionOrder" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/53 Testing: PriceLevelTest.FifoOrderSurvivesAMiddleRemoval
+11/53 Test: PriceLevelTest.FifoOrderSurvivesAMiddleRemoval
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=PriceLevelTest.FifoOrderSurvivesAMiddleRemoval" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"PriceLevelTest.FifoOrderSurvivesAMiddleRemoval" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = PriceLevelTest.FifoOrderSurvivesAMiddleRemoval
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from PriceLevelTest
+[ RUN      ] PriceLevelTest.FifoOrderSurvivesAMiddleRemoval
+[       OK ] PriceLevelTest.FifoOrderSurvivesAMiddleRemoval (0 ms)
+[----------] 1 test from PriceLevelTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"PriceLevelTest.FifoOrderSurvivesAMiddleRemoval" end time: Sep 09 21:37 EDT
+"PriceLevelTest.FifoOrderSurvivesAMiddleRemoval" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/53 Testing: OrderBookTest.RestingBuyOrderBecomesBestBid
+12/53 Test: OrderBookTest.RestingBuyOrderBecomesBestBid
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.RestingBuyOrderBecomesBestBid" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.RestingBuyOrderBecomesBestBid" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.RestingBuyOrderBecomesBestBid
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.RestingBuyOrderBecomesBestBid
+[       OK ] OrderBookTest.RestingBuyOrderBecomesBestBid (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.RestingBuyOrderBecomesBestBid" end time: Sep 09 21:37 EDT
+"OrderBookTest.RestingBuyOrderBecomesBestBid" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/53 Testing: OrderBookTest.RestingSellOrderBecomesBestAsk
+13/53 Test: OrderBookTest.RestingSellOrderBecomesBestAsk
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.RestingSellOrderBecomesBestAsk" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.RestingSellOrderBecomesBestAsk" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.RestingSellOrderBecomesBestAsk
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.RestingSellOrderBecomesBestAsk
+[       OK ] OrderBookTest.RestingSellOrderBecomesBestAsk (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.RestingSellOrderBecomesBestAsk" end time: Sep 09 21:37 EDT
+"OrderBookTest.RestingSellOrderBecomesBestAsk" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/53 Testing: OrderBookTest.BidsOrderedHighestFirst
+14/53 Test: OrderBookTest.BidsOrderedHighestFirst
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.BidsOrderedHighestFirst" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.BidsOrderedHighestFirst" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.BidsOrderedHighestFirst
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.BidsOrderedHighestFirst
+[       OK ] OrderBookTest.BidsOrderedHighestFirst (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.BidsOrderedHighestFirst" end time: Sep 09 21:37 EDT
+"OrderBookTest.BidsOrderedHighestFirst" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/53 Testing: OrderBookTest.AsksOrderedLowestFirst
+15/53 Test: OrderBookTest.AsksOrderedLowestFirst
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.AsksOrderedLowestFirst" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.AsksOrderedLowestFirst" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.AsksOrderedLowestFirst
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.AsksOrderedLowestFirst
+[       OK ] OrderBookTest.AsksOrderedLowestFirst (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.AsksOrderedLowestFirst" end time: Sep 09 21:37 EDT
+"OrderBookTest.AsksOrderedLowestFirst" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/53 Testing: OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty
+16/53 Test: OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty
+[       OK ] OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty" end time: Sep 09 21:37 EDT
+"OrderBookTest.MultipleOrdersAtSamePriceAccumulateQty" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/53 Testing: OrderBookTest.CancelRemovesOrderFromIndex
+17/53 Test: OrderBookTest.CancelRemovesOrderFromIndex
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.CancelRemovesOrderFromIndex" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.CancelRemovesOrderFromIndex" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.CancelRemovesOrderFromIndex
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.CancelRemovesOrderFromIndex
+[       OK ] OrderBookTest.CancelRemovesOrderFromIndex (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.CancelRemovesOrderFromIndex" end time: Sep 09 21:37 EDT
+"OrderBookTest.CancelRemovesOrderFromIndex" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/53 Testing: OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel
+18/53 Test: OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel
+[       OK ] OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel" end time: Sep 09 21:37 EDT
+"OrderBookTest.CancelingOnlyOrderAtPriceRemovesTheLevel" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/53 Testing: OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact
+19/53 Test: OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact
+[       OK ] OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact" end time: Sep 09 21:37 EDT
+"OrderBookTest.CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/53 Testing: OrderBookTest.EmptyingBestPriceRevealsNextBestBid
+20/53 Test: OrderBookTest.EmptyingBestPriceRevealsNextBestBid
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.EmptyingBestPriceRevealsNextBestBid" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.EmptyingBestPriceRevealsNextBestBid" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.EmptyingBestPriceRevealsNextBestBid
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.EmptyingBestPriceRevealsNextBestBid
+[       OK ] OrderBookTest.EmptyingBestPriceRevealsNextBestBid (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.EmptyingBestPriceRevealsNextBestBid" end time: Sep 09 21:37 EDT
+"OrderBookTest.EmptyingBestPriceRevealsNextBestBid" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/53 Testing: OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash
+21/53 Test: OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash
+WARNING: Cancel failed. OrderId 999 not found.
+[       OK ] OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash" end time: Sep 09 21:37 EDT
+"OrderBookTest.CancelingUnknownOrderIdReturnsFalseNotCrash" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/53 Testing: OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime
+22/53 Test: OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime
+WARNING: Cancel failed. OrderId 1 not found.
+[       OK ] OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime" end time: Sep 09 21:37 EDT
+"OrderBookTest.CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/53 Testing: OrderBookTest.BidsAndAsksAreIndependent
+23/53 Test: OrderBookTest.BidsAndAsksAreIndependent
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=OrderBookTest.BidsAndAsksAreIndependent" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"OrderBookTest.BidsAndAsksAreIndependent" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = OrderBookTest.BidsAndAsksAreIndependent
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from OrderBookTest
+[ RUN      ] OrderBookTest.BidsAndAsksAreIndependent
+[       OK ] OrderBookTest.BidsAndAsksAreIndependent (0 ms)
+[----------] 1 test from OrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"OrderBookTest.BidsAndAsksAreIndependent" end time: Sep 09 21:37 EDT
+"OrderBookTest.BidsAndAsksAreIndependent" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/53 Testing: StopOrderBookTest.EmptyBookTriggersNothing
+24/53 Test: StopOrderBookTest.EmptyBookTriggersNothing
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.EmptyBookTriggersNothing" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.EmptyBookTriggersNothing" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.EmptyBookTriggersNothing
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.EmptyBookTriggersNothing
+[       OK ] StopOrderBookTest.EmptyBookTriggersNothing (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.EmptyBookTriggersNothing" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.EmptyBookTriggersNothing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/53 Testing: StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice
+25/53 Test: StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice
+[       OK ] StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.BuyStopTriggersWhenPriceRisesToItsStopPrice" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/53 Testing: StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice
+26/53 Test: StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice
+[       OK ] StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.BuyStopDoesNotTriggerBelowItsStopPrice" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/53 Testing: StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger
+27/53 Test: StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger
+[       OK ] StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.OnlyBuyStopsAtOrBelowLastTradeTrigger" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/53 Testing: StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice
+28/53 Test: StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice
+[       OK ] StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.SellStopTriggersWhenPriceFallsToItsStopPrice" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/53 Testing: StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice
+29/53 Test: StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice
+[       OK ] StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.SellStopDoesNotTriggerAbovePriceItsStopPrice" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/53 Testing: StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger
+30/53 Test: StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger
+[       OK ] StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.OnlySellStopsAtOrAboveLastTradeTrigger" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/53 Testing: StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered
+31/53 Test: StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered
+[       OK ] StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.TriggeredOrdersAreConsumedNotReTriggered" time elapsed: 00:00:00
+----------------------------------------------------------
+
+32/53 Testing: StopOrderBookTest.BuyAndSellStopsAreIndependent
+32/53 Test: StopOrderBookTest.BuyAndSellStopsAreIndependent
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=StopOrderBookTest.BuyAndSellStopsAreIndependent" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"StopOrderBookTest.BuyAndSellStopsAreIndependent" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = StopOrderBookTest.BuyAndSellStopsAreIndependent
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from StopOrderBookTest
+[ RUN      ] StopOrderBookTest.BuyAndSellStopsAreIndependent
+[       OK ] StopOrderBookTest.BuyAndSellStopsAreIndependent (0 ms)
+[----------] 1 test from StopOrderBookTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"StopOrderBookTest.BuyAndSellStopsAreIndependent" end time: Sep 09 21:37 EDT
+"StopOrderBookTest.BuyAndSellStopsAreIndependent" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/53 Testing: SymbolTableTest.InternNewTickerReturnsUniqueId
+33/53 Test: SymbolTableTest.InternNewTickerReturnsUniqueId
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=SymbolTableTest.InternNewTickerReturnsUniqueId" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"SymbolTableTest.InternNewTickerReturnsUniqueId" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = SymbolTableTest.InternNewTickerReturnsUniqueId
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SymbolTableTest
+[ RUN      ] SymbolTableTest.InternNewTickerReturnsUniqueId
+[       OK ] SymbolTableTest.InternNewTickerReturnsUniqueId (0 ms)
+[----------] 1 test from SymbolTableTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"SymbolTableTest.InternNewTickerReturnsUniqueId" end time: Sep 09 21:37 EDT
+"SymbolTableTest.InternNewTickerReturnsUniqueId" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/53 Testing: SymbolTableTest.InternExistingTickerReturnsSameId
+34/53 Test: SymbolTableTest.InternExistingTickerReturnsSameId
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=SymbolTableTest.InternExistingTickerReturnsSameId" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"SymbolTableTest.InternExistingTickerReturnsSameId" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = SymbolTableTest.InternExistingTickerReturnsSameId
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SymbolTableTest
+[ RUN      ] SymbolTableTest.InternExistingTickerReturnsSameId
+[       OK ] SymbolTableTest.InternExistingTickerReturnsSameId (0 ms)
+[----------] 1 test from SymbolTableTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"SymbolTableTest.InternExistingTickerReturnsSameId" end time: Sep 09 21:37 EDT
+"SymbolTableTest.InternExistingTickerReturnsSameId" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/53 Testing: SymbolTableTest.InternRValueOverloadStealsMemory
+35/53 Test: SymbolTableTest.InternRValueOverloadStealsMemory
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=SymbolTableTest.InternRValueOverloadStealsMemory" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"SymbolTableTest.InternRValueOverloadStealsMemory" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = SymbolTableTest.InternRValueOverloadStealsMemory
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SymbolTableTest
+[ RUN      ] SymbolTableTest.InternRValueOverloadStealsMemory
+[       OK ] SymbolTableTest.InternRValueOverloadStealsMemory (0 ms)
+[----------] 1 test from SymbolTableTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"SymbolTableTest.InternRValueOverloadStealsMemory" end time: Sep 09 21:37 EDT
+"SymbolTableTest.InternRValueOverloadStealsMemory" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/53 Testing: SymbolTableTest.NameLookupReturnsCorrectStringReference
+36/53 Test: SymbolTableTest.NameLookupReturnsCorrectStringReference
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=SymbolTableTest.NameLookupReturnsCorrectStringReference" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"SymbolTableTest.NameLookupReturnsCorrectStringReference" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = SymbolTableTest.NameLookupReturnsCorrectStringReference
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SymbolTableTest
+[ RUN      ] SymbolTableTest.NameLookupReturnsCorrectStringReference
+[       OK ] SymbolTableTest.NameLookupReturnsCorrectStringReference (0 ms)
+[----------] 1 test from SymbolTableTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"SymbolTableTest.NameLookupReturnsCorrectStringReference" end time: Sep 09 21:37 EDT
+"SymbolTableTest.NameLookupReturnsCorrectStringReference" time elapsed: 00:00:00
+----------------------------------------------------------
+
+37/53 Testing: SymbolTableTest.NameLookupIsZeroCopyReference
+37/53 Test: SymbolTableTest.NameLookupIsZeroCopyReference
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=SymbolTableTest.NameLookupIsZeroCopyReference" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"SymbolTableTest.NameLookupIsZeroCopyReference" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = SymbolTableTest.NameLookupIsZeroCopyReference
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SymbolTableTest
+[ RUN      ] SymbolTableTest.NameLookupIsZeroCopyReference
+[       OK ] SymbolTableTest.NameLookupIsZeroCopyReference (0 ms)
+[----------] 1 test from SymbolTableTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"SymbolTableTest.NameLookupIsZeroCopyReference" end time: Sep 09 21:37 EDT
+"SymbolTableTest.NameLookupIsZeroCopyReference" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/53 Testing: SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString
+38/53 Test: SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from SymbolTableTest
+[ RUN      ] SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString
+Warning: Ticker ID is invalid.
+Warning: Ticker ID is invalid.
+[       OK ] SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString (0 ms)
+[----------] 1 test from SymbolTableTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString" end time: Sep 09 21:37 EDT
+"SymbolTableTest.NameLookupOnInvalidIdReturnsSafeEmptyString" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/53 Testing: MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority
+39/53 Test: MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MatchingEngineCurrentTest
+[ RUN      ] MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority
+[       OK ] MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority (0 ms)
+[----------] 1 test from MatchingEngineCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority" end time: Sep 09 21:37 EDT
+"MatchingEngineCurrentTest.LimitOrderMatchesAtPriceTimePriority" time elapsed: 00:00:00
+----------------------------------------------------------
+
+40/53 Testing: MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder
+40/53 Test: MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MatchingEngineCurrentTest
+[ RUN      ] MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder
+[       OK ] MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder (0 ms)
+[----------] 1 test from MatchingEngineCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder" end time: Sep 09 21:37 EDT
+"MatchingEngineCurrentTest.MarketOrderSweepsMultipleLevelsAndCancelsRemainder" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/53 Testing: MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder
+41/53 Test: MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MatchingEngineCurrentTest
+[ RUN      ] MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder
+[       OK ] MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder (0 ms)
+[----------] 1 test from MatchingEngineCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder" end time: Sep 09 21:37 EDT
+"MatchingEngineCurrentTest.IOCLimitCancelsOnlyUnfilledRemainder" time elapsed: 00:00:00
+----------------------------------------------------------
+
+42/53 Testing: MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity
+42/53 Test: MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MatchingEngineCurrentTest
+[ RUN      ] MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity
+[       OK ] MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity (0 ms)
+[----------] 1 test from MatchingEngineCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity" end time: Sep 09 21:37 EDT
+"MatchingEngineCurrentTest.FOKRejectsWithoutConsumingInsufficientLiquidity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/53 Testing: MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity
+43/53 Test: MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MatchingEngineCurrentTest
+[ RUN      ] MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity
+[       OK ] MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity (0 ms)
+[----------] 1 test from MatchingEngineCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity" end time: Sep 09 21:37 EDT
+"MatchingEngineCurrentTest.AllOrNoneLimitRejectsWithoutConsumingLiquidity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/53 Testing: MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook
+44/53 Test: MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MatchingEngineCurrentTest
+[ RUN      ] MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook
+[       OK ] MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook (0 ms)
+[----------] 1 test from MatchingEngineCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook" end time: Sep 09 21:37 EDT
+"MatchingEngineCurrentTest.UnfilledGTCOrderRestsInBook" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/53 Testing: MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook
+45/53 Test: MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MatchingEngineCurrentTest
+[ RUN      ] MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook
+[       OK ] MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook (0 ms)
+[----------] 1 test from MatchingEngineCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook" end time: Sep 09 21:37 EDT
+"MatchingEngineCurrentTest.BuyStopTriggersAndIsRemovedFromStopBook" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/53 Testing: MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold
+46/53 Test: MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MatchingEngineCurrentTest
+[ RUN      ] MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold
+[       OK ] MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold (0 ms)
+[----------] 1 test from MatchingEngineCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold" end time: Sep 09 21:37 EDT
+"MatchingEngineCurrentTest.SellStopsTriggerForPricesAtOrBelowTheirThreshold" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/53 Testing: ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder
+47/53 Test: ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ExchangeCurrentTest
+[ RUN      ] ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder
+[       OK ] ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder (0 ms)
+[----------] 1 test from ExchangeCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder" end time: Sep 09 21:37 EDT
+"ExchangeCurrentTest.LazilyCreatesBookAndCancelsRestingOrder" time elapsed: 00:00:00
+----------------------------------------------------------
+
+48/53 Testing: ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted
+48/53 Test: ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ExchangeCurrentTest
+[ RUN      ] ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted
+[       OK ] ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted (0 ms)
+[----------] 1 test from ExchangeCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted" end time: Sep 09 21:37 EDT
+"ExchangeCurrentTest.MarketOrderWithZeroPriceIsAccepted" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/53 Testing: ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected
+49/53 Test: ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ExchangeCurrentTest
+[ RUN      ] ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected
+[       OK ] ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected (0 ms)
+[----------] 1 test from ExchangeCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected" end time: Sep 09 21:37 EDT
+"ExchangeCurrentTest.InvalidQuantityAndLimitPriceAreRejected" time elapsed: 00:00:00
+----------------------------------------------------------
+
+50/53 Testing: ExchangeCurrentTest.QuantityReductionModificationPreservesOrder
+50/53 Test: ExchangeCurrentTest.QuantityReductionModificationPreservesOrder
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=ExchangeCurrentTest.QuantityReductionModificationPreservesOrder" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"ExchangeCurrentTest.QuantityReductionModificationPreservesOrder" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ExchangeCurrentTest.QuantityReductionModificationPreservesOrder
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ExchangeCurrentTest
+[ RUN      ] ExchangeCurrentTest.QuantityReductionModificationPreservesOrder
+[       OK ] ExchangeCurrentTest.QuantityReductionModificationPreservesOrder (0 ms)
+[----------] 1 test from ExchangeCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ExchangeCurrentTest.QuantityReductionModificationPreservesOrder" end time: Sep 09 21:37 EDT
+"ExchangeCurrentTest.QuantityReductionModificationPreservesOrder" time elapsed: 00:00:00
+----------------------------------------------------------
+
+51/53 Testing: ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders
+51/53 Test: ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ExchangeCurrentTest
+[ RUN      ] ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders
+[       OK ] ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders (0 ms)
+[----------] 1 test from ExchangeCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders" end time: Sep 09 21:37 EDT
+"ExchangeCurrentTest.EndOfDayCancelsDayOrdersButKeepsGTCOrders" time elapsed: 00:00:00
+----------------------------------------------------------
+
+52/53 Testing: ExchangeCurrentTest.EndOfDayCancelsDayStopOrders
+52/53 Test: ExchangeCurrentTest.EndOfDayCancelsDayStopOrders
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=ExchangeCurrentTest.EndOfDayCancelsDayStopOrders" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"ExchangeCurrentTest.EndOfDayCancelsDayStopOrders" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ExchangeCurrentTest.EndOfDayCancelsDayStopOrders
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ExchangeCurrentTest
+[ RUN      ] ExchangeCurrentTest.EndOfDayCancelsDayStopOrders
+[       OK ] ExchangeCurrentTest.EndOfDayCancelsDayStopOrders (0 ms)
+[----------] 1 test from ExchangeCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ExchangeCurrentTest.EndOfDayCancelsDayStopOrders" end time: Sep 09 21:37 EDT
+"ExchangeCurrentTest.EndOfDayCancelsDayStopOrders" time elapsed: 00:00:00
+----------------------------------------------------------
+
+53/53 Testing: ExchangeCurrentTest.UnknownCancelAndModifyAreRejected
+53/53 Test: ExchangeCurrentTest.UnknownCancelAndModifyAreRejected
+Command: "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests" "--gtest_filter=ExchangeCurrentTest.UnknownCancelAndModifyAreRejected" "--gtest_also_run_disabled_tests"
+Directory: /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local
+"ExchangeCurrentTest.UnknownCancelAndModifyAreRejected" start time: Sep 09 21:37 EDT
+Output:
+----------------------------------------------------------
+Running main() from /Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ExchangeCurrentTest.UnknownCancelAndModifyAreRejected
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ExchangeCurrentTest
+[ RUN      ] ExchangeCurrentTest.UnknownCancelAndModifyAreRejected
+[       OK ] ExchangeCurrentTest.UnknownCancelAndModifyAreRejected (0 ms)
+[----------] 1 test from ExchangeCurrentTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ExchangeCurrentTest.UnknownCancelAndModifyAreRejected" end time: Sep 09 21:37 EDT
+"ExchangeCurrentTest.UnknownCancelAndModifyAreRejected" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 09 21:37 EDT

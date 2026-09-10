@@ -32,6 +32,8 @@ add_executable(lob_tests
   tests/test_order_book.cc
   tests/test_stop_order_book.cc
   tests/test_symbol_table.cc
+  tests/test_matching_engine_v2.cc
+  tests/test_exchange_v2.cc
 )
 target_link_libraries(lob_tests PRIVATE GTest::gtest_main lob_core)
 

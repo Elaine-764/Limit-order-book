@@ -49,7 +49,8 @@ TEST_F(OrderBookTest, CancelRemovesOrderFromIndex) {
     book.addRestingOrder(makeOrder(1, Side::BUY, Price{100}, Qty{10}), Side::BUY);
     EXPECT_TRUE(book.hasOrder(OrderId{1}));
 
-    bool result = book.cancel(OrderId{1});
+    std::vector<ExecutionReport> reports;
+    bool result = book.cancel(OrderId{1}, reports);
 
     EXPECT_TRUE(result);
     EXPECT_FALSE(book.hasOrder(OrderId{1}));
@@ -57,7 +58,8 @@ TEST_F(OrderBookTest, CancelRemovesOrderFromIndex) {
 
 TEST_F(OrderBookTest, CancelingOnlyOrderAtPriceRemovesTheLevel) {
     book.addRestingOrder(makeOrder(1, Side::BUY, Price{100}, Qty{10}), Side::BUY);
-    book.cancel(OrderId{1});
+    std::vector<ExecutionReport> reports;
+    book.cancel(OrderId{1}, reports);
 
     EXPECT_FALSE(book.bestBid().has_value());
     EXPECT_EQ(book.bidLevelCount(), 0u);
@@ -67,7 +69,8 @@ TEST_F(OrderBookTest, CancelingOneOfSeveralOrdersLeavesLevelAndSiblingsIntact) {
     book.addRestingOrder(makeOrder(1, Side::BUY, Price{100}, Qty{10}), Side::BUY);
     book.addRestingOrder(makeOrder(2, Side::BUY, Price{100}, Qty{5}), Side::BUY);
 
-    book.cancel(OrderId{1});
+    std::vector<ExecutionReport> reports;
+    book.cancel(OrderId{1}, reports);
 
     EXPECT_EQ(book.bidLevelCount(), 1u);                       // level survives
     EXPECT_EQ(book.quantityAt(Side::BUY, Price{100}).get(), 5); // only order 2 remains
@@ -79,20 +82,23 @@ TEST_F(OrderBookTest, EmptyingBestPriceRevealsNextBestBid) {
     book.addRestingOrder(makeOrder(1, Side::BUY, Price{100}, Qty{10}), Side::BUY);
     book.addRestingOrder(makeOrder(2, Side::BUY, Price{99}, Qty{10}), Side::BUY);
 
-    book.cancel(OrderId{1});   // remove the 100 level entirely
+    std::vector<ExecutionReport> reports;
+    book.cancel(OrderId{1}, reports);   // remove the 100 level entirely
 
     EXPECT_EQ(book.bestBid()->get(), 99);
 }
 
 TEST_F(OrderBookTest, CancelingUnknownOrderIdReturnsFalseNotCrash) {
-    EXPECT_FALSE(book.cancel(OrderId{999}));
+    std::vector<ExecutionReport> reports;
+    EXPECT_FALSE(book.cancel(OrderId{999}, reports));
 }
 
 TEST_F(OrderBookTest, CancelingSameOrderTwiceIsSafeAndReturnsFalseSecondTime) {
     book.addRestingOrder(makeOrder(1, Side::BUY, Price{100}, Qty{10}), Side::BUY);
+    std::vector<ExecutionReport> reports;
 
-    EXPECT_TRUE(book.cancel(OrderId{1}));
-    EXPECT_FALSE(book.cancel(OrderId{1}));   // already gone — must not double-erase or crash
+    EXPECT_TRUE(book.cancel(OrderId{1}, reports));
+    EXPECT_FALSE(book.cancel(OrderId{1}, reports));   // already gone — must not double-erase or crash
 }
 
 TEST_F(OrderBookTest, BidsAndAsksAreIndependent) {
@@ -102,7 +108,8 @@ TEST_F(OrderBookTest, BidsAndAsksAreIndependent) {
     EXPECT_EQ(book.bidLevelCount(), 1u);
     EXPECT_EQ(book.askLevelCount(), 1u);
 
-    book.cancel(OrderId{1});
+    std::vector<ExecutionReport> reports;
+    book.cancel(OrderId{1}, reports);
     EXPECT_EQ(book.bidLevelCount(), 0u);
     EXPECT_EQ(book.askLevelCount(), 1u);   // untouched by the bid-side cancel
 }

@@ -1,4 +1,5 @@
 #include "../include/orderbook.h"
+#include "../include/engine.h"
 #include "../include/data.h"
 #include "../include/types.h"
 #include <iostream>
@@ -53,7 +54,7 @@ std::vector<ExecutionReport> MatchingEngine::submit(Order order, OrderBook& book
         Order& cur_order = order_queue[queue_index++];
 
         if (cur_order.tif == TimeInForce::FILL_OR_KILL || 
-           (cur_order.fill == FillPolicy::ALL_OR_NONE && cur_order.type == OrderType::MARKET)) {
+           cur_order.fill == FillPolicy::ALL_OR_NONE) {
             
             if (!hasEnoughLiquidity(cur_order, book)) {
                 reports.push_back(ExecutionReport{
@@ -114,7 +115,7 @@ std::vector<ExecutionReport> MatchingEngine::submit(Order order, OrderBook& book
                         std::vector<Fill>{}
                     });
             } else if (cur_order.type == OrderType::LIMIT && 
-                      (cur_order.tif == TimeInForce::DAY || cur_order.tif == TimeInForce::GOOD_TIL_CANCEL)) {
+                      (cur_order.tif == TimeInForce::DAY || cur_order.tif == TimeInForce::GOOD_TIL_CANCELED)) {
                         book.addRestingOrder(cur_order, cur_order.side);
                       }
         }
@@ -148,9 +149,10 @@ std::vector<Fill> MatchingEngine::matchMarket(Order& order, OrderBook& book) {
                                 });
                 remaining -= transacted_qty;
                 transacted_order_it->quantity -= transacted_qty;
+                price_level.adjustQty(-transacted_qty);
 
                 if (transacted_order_it->quantity == 0) {
-                    price_level.removeOrder(transacted_order_it);
+                    book.removeFilledOrder(transacted_order_it->order_id);
                 }
 
             }
@@ -178,9 +180,10 @@ std::vector<Fill> MatchingEngine::matchMarket(Order& order, OrderBook& book) {
                                 });
                 remaining -= transacted_qty;
                 transacted_order_it->quantity -= transacted_qty;
+                price_level.adjustQty(-transacted_qty);
 
                 if (transacted_order_it->quantity == 0) {
-                    price_level.removeOrder(transacted_order_it);
+                    book.removeFilledOrder(transacted_order_it->order_id);
                 }
             }
             if (price_level.isEmpty()) {
@@ -219,9 +222,10 @@ std::vector<Fill> MatchingEngine::matchLimit(Order& order, OrderBook& book) {
                                 });
                 remaining -= transacted_qty;
                 transacted_order_it->quantity -= transacted_qty;
+                price_level.adjustQty(-transacted_qty);
 
                 if (transacted_order_it->quantity == 0) {
-                    price_level.removeOrder(transacted_order_it);
+                    book.removeFilledOrder(transacted_order_it->order_id);
                 }
 
             }
@@ -250,9 +254,10 @@ std::vector<Fill> MatchingEngine::matchLimit(Order& order, OrderBook& book) {
                                 });
                 remaining -= transacted_qty;
                 transacted_order_it->quantity -= transacted_qty;
+                price_level.adjustQty(-transacted_qty);
 
                 if (transacted_order_it->quantity == 0) {
-                    price_level.removeOrder(transacted_order_it);
+                    book.removeFilledOrder(transacted_order_it->order_id);
                 }
             }
             if (price_level.isEmpty()) {

@@ -144,8 +144,9 @@ ctest --test-dir build --output-on-failure
 * [x] Implement direct order indexing
 * [x] Implement cancellation
 * [x] Add unit tests
-* [ ] Implement matching engine
-* [ ] Add comprehensive matching tests
+* [x] Implement matching engine
+* [x] Add comprehensive matching tests
+* [ ] Add frontend with `ncurses`
 * [ ] Add benchmarks
 * [ ] Analyze performance and data-structure tradeoffs
 * [ ] Merge v2 into `main`
