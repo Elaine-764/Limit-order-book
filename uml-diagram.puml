@@ -1,0 +1,78 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Exchange {
+  - books: unordered_map<string, OrderBook>
+  - order_id_to_ticker: unordered_map<int, string>
+  - num_assets: int
+  --
+  + addOrder(order: Order): vector<FillResult>
+  + cancelOrder(order_id: int): void
+  + modifyOrder(order_id: int, new_order: Order): vector<FillResult>
+  + getBestBid(ticker: string): Price
+  + getBestAsk(ticker: string): Price
+  + getSpread(ticker: string): Price
+  + findOrder(order_id: int): Order&
+  + getRemainingQty(order_id: int): int
+}
+class OrderBook {
+  - bids: map<Price, PriceLevel, greater<Price>>
+  - asks: map<Price, PriceLevel>
+  - order_index: unordered_map<int, pair<Side, Price>>
+  --
+  + addOrder(order: Order): vector<FillResult>
+  + cancelOrder(order_id: int): void
+  + modifyOrder(order: Order): vector<FillResult>
+  + getBestBid(): Price
+  + getBestAsk(): Price
+}
+
+class PriceLevel {
+  - price: Price
+  - orders: list<Order>
+  --
+  + addOrder(order: Order): void
+  + cancelOrder(order_id: int): void
+  + getTotalQuantity(): int
+}
+
+class Order {
+  - order_id: int
+  - price: Price
+  - quantity: int
+  - side: Side
+  - type: OrderType
+}
+
+class FillResult {
+  - order_id: int
+  - quantity: int
+  - price: Price
+}
+
+class Price {
+  <<typedef / using>>
+}
+
+enum Side {
+  BUY
+  SELL
+}
+
+enum OrderType {
+  LIMIT
+  MARKET
+}
+
+Exchange "1" *-- "*" OrderBook
+OrderBook "1" *-- "*" PriceLevel
+PriceLevel "1" *-- "*" Order
+Exchange ..> Order
+Exchange ..> FillResult
+OrderBook ..> FillResult
+Order ..> Price
+Order ..> Side
+Order ..> OrderType
+FillResult ..> Price
+
+@enduml
