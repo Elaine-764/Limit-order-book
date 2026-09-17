@@ -20,6 +20,12 @@ void PriceLevel::removeOrder(std::list<Order>::iterator it) {
 
 // OrderBook
 void OrderBook::addRestingOrder(Order order, Side side) {
+    // check if order id exists - error
+    if (order_index_.find(order.order_id) != order_index_.end()) {
+        std::cerr << "CRITICAL ERROR: Duplicate Order ID " << order.order_id.get() << " rejected during insertion loop.\n";
+        return; 
+    }
+
     // add order to the correct price level - create price level if needed
     PriceLevel* pricelevel = nullptr;
     if (side == Side::BUY) {

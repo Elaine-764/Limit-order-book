@@ -7,6 +7,10 @@
 class OrderBookTest : public ::testing::Test {
 protected:
     OrderBook book;
+    OrderBookTest() : book(1) {} 
+    void SetUp() override {
+        // Any additional test harness setup goes here...
+    }
 };
 
 TEST_F(OrderBookTest, RestingBuyOrderBecomesBestBid) {

@@ -5,13 +5,13 @@
 #include "test_helpers.h"
 
 TEST(StopOrderBookTest, EmptyBookTriggersNothing) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     auto triggered = stops.triggerUpTo(Price{100});
     EXPECT_TRUE(triggered.empty());
 }
 
 TEST(StopOrderBookTest, BuyStopTriggersWhenPriceRisesToItsStopPrice) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP));
     // assuming stop_price is set via the order's price field per your multimap key,
     // or a dedicated stop_price field — adjust makeOrder args to match your Order struct.
@@ -23,7 +23,7 @@ TEST(StopOrderBookTest, BuyStopTriggersWhenPriceRisesToItsStopPrice) {
 }
 
 TEST(StopOrderBookTest, BuyStopDoesNotTriggerBelowItsStopPrice) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::BUY, Price{105}, Qty{10}, OrderType::STOP));
 
     auto triggered = stops.triggerUpTo(Price{100});   // hasn't reached 105 yet
@@ -32,7 +32,7 @@ TEST(StopOrderBookTest, BuyStopDoesNotTriggerBelowItsStopPrice) {
 }
 
 TEST(StopOrderBookTest, OnlyBuyStopsAtOrBelowLastTradeTrigger) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP));
     stops.add(makeOrder(2, Side::BUY, Price{105}, Qty{10}, OrderType::STOP));
 
@@ -43,7 +43,7 @@ TEST(StopOrderBookTest, OnlyBuyStopsAtOrBelowLastTradeTrigger) {
 }
 
 TEST(StopOrderBookTest, SellStopTriggersWhenPriceFallsToItsStopPrice) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::SELL, Price{95}, Qty{10}, OrderType::STOP));
 
     auto triggered = stops.triggerUpTo(Price{95});
@@ -53,7 +53,7 @@ TEST(StopOrderBookTest, SellStopTriggersWhenPriceFallsToItsStopPrice) {
 }
 
 TEST(StopOrderBookTest, SellStopDoesNotTriggerAbovePriceItsStopPrice) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::SELL, Price{95}, Qty{10}, OrderType::STOP));
 
     auto triggered = stops.triggerUpTo(Price{100});   // hasn't fallen to 95 yet
@@ -62,7 +62,7 @@ TEST(StopOrderBookTest, SellStopDoesNotTriggerAbovePriceItsStopPrice) {
 }
 
 TEST(StopOrderBookTest, OnlySellStopsAtOrAboveLastTradeTrigger) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::SELL, Price{100}, Qty{10}, OrderType::STOP));
     stops.add(makeOrder(2, Side::SELL, Price{95}, Qty{10}, OrderType::STOP));
 
@@ -73,7 +73,7 @@ TEST(StopOrderBookTest, OnlySellStopsAtOrAboveLastTradeTrigger) {
 }
 
 TEST(StopOrderBookTest, TriggeredOrdersAreConsumedNotReTriggered) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP));
 
     auto first = stops.triggerUpTo(Price{102});
@@ -84,7 +84,7 @@ TEST(StopOrderBookTest, TriggeredOrdersAreConsumedNotReTriggered) {
 }
 
 TEST(StopOrderBookTest, BuyAndSellStopsAreIndependent) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP));
     stops.add(makeOrder(2, Side::SELL, Price{95}, Qty{10}, OrderType::STOP));
 

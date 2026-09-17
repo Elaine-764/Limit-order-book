@@ -27,6 +27,13 @@ class Exchange {
     std::unordered_map<std::uint32_t, StopOrderBook> stop_books_;
     SymbolTable symbols_;
     MatchingEngine engine_;
+
+    struct OrderMetaData {
+        uint32_t ticker_id;
+        OrderType type; // Useful to differentiate STOP vs LIMIT instantly
+    };
+    std::unordered_map<OrderId, OrderMetaData, OrderIdHash> global_order_registry_;
+
   public:
     std::vector<ExecutionReport> submitOrder(Order order);
     std::vector<ExecutionReport> cancelOrder(CancelRequest req);

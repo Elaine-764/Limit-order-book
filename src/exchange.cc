@@ -55,29 +55,50 @@ const std::string& SymbolTable::name(std::uint32_t id) const {
 std::vector<ExecutionReport> Exchange::cancelOrder(CancelRequest req) {
     std::vector<ExecutionReport> reports;
 
-    auto book_it = books_.find(req.ticker_id);
-    if (book_it == books_.end()) {
-        reports.push_back(ExecutionReport {
-            req.order_id, 
-            ExecutionType::REJECTED,
-            Qty{0},
-            Price{0},
-            std::vector<Fill>{}
-        });
+    // verify ownership via global registry
+    auto registry_it = global_order_registry_.find(req.order_id);
+    if (registry_it == global_order_registry_.end()) {
+        reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
         return reports;
     }
 
-    OrderBook& book = book_it->second;
-    bool success = book.cancel(req.order_id, reports);
-    if (success) return reports;
-
-    reports.push_back(ExecutionReport {
-            req.order_id, 
-            ExecutionType::REJECTED,
-            Qty{0},
-            Price{0},
-            std::vector<Fill>{}
-        });
+    OrderMetaData& meta = registry_it->second;
+    // check if ticker id matches
+    if (meta.ticker_id != req.ticker_id) {
+        std::cerr << "WARNING: Malicious or corrupt cancel attempt. Order ID " 
+                  << req.order_id.get() << " belongs to Ticker " << meta.ticker_id 
+                  << ", but client requested Ticker " << req.ticker_id << ".\n";
+        reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
+        return reports;
+    }
+    
+    // check if order is a stop/stop limit order
+    if (meta.type == OrderType::STOP || meta.type == OrderType::STOP_LIMIT) {
+        auto book_it = stop_books_.find(req.ticker_id);
+        if (book_it == stop_books_.end()) {
+            reports.push_back(ExecutionReport {req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+            return reports;
+        }
+        StopOrderBook& book = book_it->second;
+        if (book.cancel(req.order_id, reports)) {
+            global_order_registry_.erase(registry_it);
+        } else {
+            reports.push_back(ExecutionReport {req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+        }
+    } else {
+        auto book_it = books_.find(req.ticker_id);
+        if (book_it == books_.end()) {
+            reports.push_back(ExecutionReport {req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+            return reports;
+        }
+        OrderBook& book = book_it->second;
+        if (book.cancel(req.order_id, reports)) {
+            global_order_registry_.erase(registry_it);
+        } else {
+            reports.push_back(ExecutionReport {req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+        }
+    }
+   
     return reports;
 }
 
@@ -85,52 +106,74 @@ std::vector<ExecutionReport> Exchange::submitOrder(Order order) {
     std::vector<ExecutionReport> reports;
 
     // Global Pre-Trade Validation
-    if (order.quantity <= 0 ||
+    if ((order.quantity <= 0 || // invalid quantity
         (order.type != OrderType::MARKET && order.type != OrderType::STOP &&
          order.price <= 0) ||
         ((order.type == OrderType::STOP || order.type == OrderType::STOP_LIMIT) &&
-         order.stop_price <= 0)) {
+         order.stop_price <= 0)) || 
+       (order.side != Side::BUY && order.side != Side::SELL) ||  // invalid side
+       (order.stop_price <= 0 && order.type == OrderType::STOP) || // stop orders without trigger price 
+       (order.type == OrderType::STOP_LIMIT && (order.stop_price <= 0 || order.price <= 0)))  // stop limit orders without both trigger + limit price
+    { 
         reports.push_back(ExecutionReport{order.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
         return reports;
     }
 
-    auto [book_it, book_inserted] = books_.try_emplace(order.ticker_id);
-    auto [stop_book_it, stop_inserted] = stop_books_.try_emplace(order.ticker_id);
+    auto [book_it, book_inserted] = books_.try_emplace(order.ticker_id, order.ticker_id);
+    auto [stop_book_it, stop_inserted] = stop_books_.try_emplace(order.ticker_id, order.ticker_id);
 
     return engine_.submit(order, book_it->second, stop_book_it->second);
 }
 
 std::vector<ExecutionReport> Exchange::modifyOrder(const ModifyRequest& req) {
     std::vector<ExecutionReport> reports;
-    // Global Pre-Trade Validation
+
+    // Global Pre-Trade Validation  - valid prices and quantity
     if (req.new_quantity <= 0 || req.new_price <= 0) {
         reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
         return reports;
     }
 
-    auto book_it = books_.find(req.ticker_id);
-    if (book_it == books_.end()) {
-        reports.push_back(ExecutionReport {
-            req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}
-        });
+    // verify ownership via global registry
+    auto registry_it = global_order_registry_.find(req.order_id);
+    if (registry_it == global_order_registry_.end()) {
+        reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
         return reports;
     }
 
-    OrderBook& limit_book = book_it->second;
-    StopOrderBook& stop_book = stop_books_[req.ticker_id];
-
-    if (limit_book.hasOrder(req.order_id)) {
-        bool success = limit_book.modify(req, reports, *this);
-        if (!success) {
-            reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
+    OrderMetaData& meta = registry_it->second;
+    // check if ticker id matches
+    if (meta.ticker_id != req.ticker_id) {
+        std::cerr << "WARNING: Malicious or corrupt modification attempt. Order ID " 
+                  << req.order_id.get() << " belongs to Ticker " << meta.ticker_id 
+                  << ", but client requested Ticker " << req.ticker_id << ".\n";
+        reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
+        return reports;
+    }
+    
+    // check if order is a stop/stop limit order
+    if (meta.type == OrderType::STOP || meta.type == OrderType::STOP_LIMIT) {
+        auto book_it = stop_books_.find(req.ticker_id);
+        if (book_it == stop_books_.end()) {
+            reports.push_back(ExecutionReport {req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+            return reports;
         }
-    } else if (stop_book.contains(req.order_id)) {
+        StopOrderBook& stop_book = book_it->second;
         bool success = stop_book.modify(req, reports, *this);
         if (!success) {
             reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
         }
     } else {
-        reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
+        auto book_it = books_.find(req.ticker_id);
+        if (book_it == books_.end()) {
+            reports.push_back(ExecutionReport {req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+            return reports;
+        }
+        OrderBook& book = book_it->second;
+        bool success = book.modify(req, reports, *this);
+        if (!success) {
+            reports.push_back(ExecutionReport{req.order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, {}});
+        }
     }
     
     return reports;

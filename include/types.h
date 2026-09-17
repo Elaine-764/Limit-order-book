@@ -69,7 +69,7 @@ using OrderId = StrongType<OrderIdTag, std::int64_t>;
 // }
 struct OrderIdHash {
   std::size_t operator()(OrderId id) const noexcept {
-    return std::hash<std::int64_t>{}(id.get());
+    return static_cast<size_t>(id.get()); // Zero-allocation, single-cycle bitwise extraction
   }
 };
 

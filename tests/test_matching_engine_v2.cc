@@ -6,8 +6,8 @@
 
 TEST(MatchingEngineCurrentTest, LimitOrderMatchesAtPriceTimePriority) {
     MatchingEngine engine;
-    OrderBook book;
-    StopOrderBook stops;
+    OrderBook book {1};
+    StopOrderBook stops {1};
 
     book.addRestingOrder(makeOrder(1, Side::SELL, Price{100}, Qty{5}), Side::SELL);
     book.addRestingOrder(makeOrder(2, Side::SELL, Price{100}, Qty{5}), Side::SELL);
@@ -29,8 +29,8 @@ TEST(MatchingEngineCurrentTest, LimitOrderMatchesAtPriceTimePriority) {
 
 TEST(MatchingEngineCurrentTest, MarketOrderSweepsMultipleLevelsAndCancelsRemainder) {
     MatchingEngine engine;
-    OrderBook book;
-    StopOrderBook stops;
+    OrderBook book {1};
+    StopOrderBook stops {1};
 
     book.addRestingOrder(makeOrder(10, Side::SELL, Price{100}, Qty{3}), Side::SELL);
     book.addRestingOrder(makeOrder(11, Side::SELL, Price{101}, Qty{4}), Side::SELL);
@@ -48,8 +48,8 @@ TEST(MatchingEngineCurrentTest, MarketOrderSweepsMultipleLevelsAndCancelsRemaind
 
 TEST(MatchingEngineCurrentTest, IOCLimitCancelsOnlyUnfilledRemainder) {
     MatchingEngine engine;
-    OrderBook book;
-    StopOrderBook stops;
+    OrderBook book {1};
+    StopOrderBook stops {1};
 
     book.addRestingOrder(makeOrder(10, Side::SELL, Price{100}, Qty{4}), Side::SELL);
 
@@ -68,8 +68,8 @@ TEST(MatchingEngineCurrentTest, IOCLimitCancelsOnlyUnfilledRemainder) {
 
 TEST(MatchingEngineCurrentTest, FOKRejectsWithoutConsumingInsufficientLiquidity) {
     MatchingEngine engine;
-    OrderBook book;
-    StopOrderBook stops;
+    OrderBook book {1};
+    StopOrderBook stops {1};
 
     book.addRestingOrder(makeOrder(10, Side::SELL, Price{100}, Qty{4}), Side::SELL);
 
@@ -87,8 +87,8 @@ TEST(MatchingEngineCurrentTest, FOKRejectsWithoutConsumingInsufficientLiquidity)
 
 TEST(MatchingEngineCurrentTest, AllOrNoneLimitRejectsWithoutConsumingLiquidity) {
     MatchingEngine engine;
-    OrderBook book;
-    StopOrderBook stops;
+    OrderBook book {1};
+    StopOrderBook stops {1};
 
     book.addRestingOrder(makeOrder(10, Side::SELL, Price{100}, Qty{4}), Side::SELL);
 
@@ -104,8 +104,8 @@ TEST(MatchingEngineCurrentTest, AllOrNoneLimitRejectsWithoutConsumingLiquidity) 
 
 TEST(MatchingEngineCurrentTest, UnfilledGTCOrderRestsInBook) {
     MatchingEngine engine;
-    OrderBook book;
-    StopOrderBook stops;
+    OrderBook book {1};
+    StopOrderBook stops {1};
 
     auto reports = engine.submit(
         makeOrder(20, Side::BUY, Price{99}, Qty{6}, OrderType::LIMIT,
@@ -119,8 +119,8 @@ TEST(MatchingEngineCurrentTest, UnfilledGTCOrderRestsInBook) {
 
 TEST(MatchingEngineCurrentTest, BuyStopTriggersAndIsRemovedFromStopBook) {
     MatchingEngine engine;
-    OrderBook book;
-    StopOrderBook stops;
+    OrderBook book {1};
+    StopOrderBook stops{1};
 
     book.addRestingOrder(makeOrder(10, Side::SELL, Price{100}, Qty{2}), Side::SELL);
     book.addRestingOrder(makeOrder(11, Side::SELL, Price{105}, Qty{3}), Side::SELL);
@@ -138,7 +138,7 @@ TEST(MatchingEngineCurrentTest, BuyStopTriggersAndIsRemovedFromStopBook) {
 }
 
 TEST(MatchingEngineCurrentTest, SellStopsTriggerForPricesAtOrBelowTheirThreshold) {
-    StopOrderBook stops;
+    StopOrderBook stops {1};
     stops.add(makeOrder(1, Side::SELL, Price{0}, Qty{1}, OrderType::STOP,
                         TimeInForce::DAY, FillPolicy::NORMAL, Price{100}));
     stops.add(makeOrder(2, Side::SELL, Price{0}, Qty{1}, OrderType::STOP,

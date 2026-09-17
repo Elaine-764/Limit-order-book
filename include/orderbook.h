@@ -43,6 +43,11 @@ class OrderBook {
     std::map<Price, PriceLevel, std::less<Price>> asks_;
     std::unordered_map<OrderId, OrderLocation, OrderIdHash> order_index_;
   public:
+    OrderBook(std::uint32_t ticker_id): ticker_id(ticker_id) {
+      order_index_.reserve(100000);
+      order_index_.max_load_factor(0.5);
+    }
+
     auto& getAsks() { return asks_; }
     auto& getBids() { return bids_; }
     void addRestingOrder(Order order, Side side);
@@ -80,6 +85,7 @@ class OrderBook {
 
 class StopOrderBook {
   private:
+    std::uint32_t ticker_id;
     std::multimap<Price, Order> buy_stops_;
     std::multimap<Price, Order> sell_stops_;
     
@@ -90,6 +96,10 @@ class StopOrderBook {
     std::unordered_map<OrderId, StopLocation, OrderIdHash> stop_index_;
 
   public:
+    StopOrderBook(std::uint32_t ticker_id): ticker_id(ticker_id) {
+      stop_index_.reserve(100000);
+      stop_index_.max_load_factor(0.5);
+    }
     void add(Order order);
     bool cancel(OrderId order_id, std::vector<ExecutionReport>& reports);
     std::vector<Order> triggerUpTo(Price last_trade_price);

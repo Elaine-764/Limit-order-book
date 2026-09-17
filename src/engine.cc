@@ -117,6 +117,7 @@ std::vector<ExecutionReport> MatchingEngine::submit(Order order, OrderBook& book
             } else if (cur_order.type == OrderType::LIMIT && 
                       (cur_order.tif == TimeInForce::DAY || cur_order.tif == TimeInForce::GOOD_TIL_CANCELED)) {
                         book.addRestingOrder(cur_order, cur_order.side);
+                        // TODO: add report here
                       }
         }
     }
