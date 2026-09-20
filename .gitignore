@@ -2,3 +2,6 @@ build/
 planning/
 **/.DS_Store
 .DS_Store
+**/*2.cc
+.vscode/*
+tests/benchmarks/

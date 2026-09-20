@@ -19,7 +19,7 @@ void PriceLevel::removeOrder(std::list<Order>::iterator it) {
 }
 
 // OrderBook
-void OrderBook::addRestingOrder(Order order, Side side) {
+void OrderBook::addRestingOrder(Order order, Side side, std::vector<ExecutionReport>& reports) {
     // check if order id exists - error
     if (order_index_.find(order.order_id) != order_index_.end()) {
         std::cerr << "CRITICAL ERROR: Duplicate Order ID " << order.order_id.get() << " rejected during insertion loop.\n";
@@ -39,43 +39,27 @@ void OrderBook::addRestingOrder(Order order, Side side) {
 
     // create OrderLocation - fast version - put order and order location into order_index_
     order_index_.try_emplace(order.order_id, side, pricelevel, it);
+    reports.emplace_back(ExecutionReport{order.order_id, ExecutionType::NEW, order.quantity, order.price, std::vector<Fill>{}});
 }
 
-bool OrderBook::cancel(OrderId order_id, std::vector<ExecutionReport>& reports) {
-    // find OrderLocation
-    auto order_it = order_index_.find(order_id);
-    if (order_it != order_index_.end()) {
-        // remove order from bid/ask
-        OrderLocation& loc = order_it->second;
-        PriceLevel* level = loc.level;
-
-        Qty canceled_qty = loc.order_it->quantity;
-        level->removeOrder(loc.order_it);
-        reports.emplace_back(ExecutionReport{
-                order_id,
-                ExecutionType::CANCELED,
-                canceled_qty,
-                level->getPrice(),
-                std::vector<Fill>{}
-            });
-    
-        // check if any orders remain at this price level, if not, remove
-        if (level->isEmpty()) {
-            if (loc.side == Side::BUY) {
-                bids_.erase(level->getPrice());
-            } else {
-                asks_.erase(level->getPrice());
-            }
-        }
-
-        // remove from order_index_
-        order_index_.erase(order_it);
-    } else {
-        // give error message
-        std::cerr << "WARNING: Cancel failed. OrderId " << order_id.get() << " not found.\n";
-        reports.emplace_back(ExecutionReport{order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+bool OrderBook::removeAndReport(OrderId order_id, ExecutionType type, std::vector<ExecutionReport>& reports) {
+    auto idx_it = order_index_.find(order_id);
+    if (idx_it == order_index_.end()) {
+        reports.emplace_back(order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{});
         return false;
     }
+    OrderLocation& loc = idx_it->second;
+    Qty remaining_qty = loc.order_it->quantity;
+    Price price = loc.level->getPrice();
+    
+    loc.level->removeOrder(loc.order_it);
+    if (loc.level->isEmpty()) {
+        if (loc.side == Side::BUY) bids_.erase(price);
+        else asks_.erase(price);
+    }
+    order_index_.erase(idx_it);
+
+    reports.emplace_back(order_id, type, remaining_qty, price, std::vector<Fill>{});
     return true;
 }
 
@@ -85,8 +69,14 @@ bool OrderBook::removeFilledOrder(OrderId order_id) {
 
     OrderLocation& loc = order_it->second;
     PriceLevel* level = loc.level;
+    Price price = level->getPrice();
+    Side side = loc.side;
     level->removeOrder(loc.order_it);
     order_index_.erase(order_it);
+    if (level->isEmpty()) {
+        if (side == Side::BUY) bids_.erase(price);
+        else asks_.erase(price);
+    }
     return true;
 }
 
@@ -117,7 +107,7 @@ bool OrderBook::modify(const ModifyRequest& req, std::vector<ExecutionReport>& r
     if (level->getPrice() == req.new_price && req.new_quantity < order_it->quantity) {
         Qty diff = order_it->quantity - req.new_quantity;
         order_it->quantity -= diff;
-        level->adjustQty(-diff);
+        level->reduceQty(diff);
         
         reports.emplace_back(ExecutionReport{
             req.order_id, 
@@ -141,24 +131,20 @@ bool OrderBook::modify(const ModifyRequest& req, std::vector<ExecutionReport>& r
     
     return true;
 }
-
 void OrderBook::purgeDayOrders(std::vector<ExecutionReport>& cancellations) noexcept {
     std::vector<OrderId> targets_to_kill;
-    for (const auto& [price, level] : bids_) {
-        for (auto order_it = level.cbegin(); order_it != level.cend(); ++order_it) {
-            if (order_it->tif == TimeInForce::DAY) targets_to_kill.push_back(order_it->order_id);
-        }
-    }
-    for (const auto& [price, level] : asks_) {
-        for (auto order_it = level.cbegin(); order_it != level.cend(); ++order_it) {
-            if (order_it->tif == TimeInForce::DAY) targets_to_kill.push_back(order_it->order_id);
-        }
-    }
-    for (OrderId id : targets_to_kill) cancel(id, cancellations);
+    for (const auto& [price, level] : bids_)
+        for (auto it = level.cbegin(); it != level.cend(); ++it)
+            if (it->tif == TimeInForce::DAY) targets_to_kill.push_back(it->order_id);
+    for (const auto& [price, level] : asks_)
+        for (auto it = level.cbegin(); it != level.cend(); ++it)
+            if (it->tif == TimeInForce::DAY) targets_to_kill.push_back(it->order_id);
+
+    for (OrderId id : targets_to_kill) expire(id, cancellations);   // EXPIRED, not CANCELED
 }
 
 // StopOrderBook
-void StopOrderBook::add(Order order) {
+void StopOrderBook::add(Order order, std::vector<ExecutionReport>& reports) {
     const OrderId order_id = order.order_id;
     if (order.side == Side::BUY) {
         auto it = buy_stops_.emplace(order.stop_price, std::move(order));
@@ -167,6 +153,7 @@ void StopOrderBook::add(Order order) {
         auto it = sell_stops_.emplace(order.stop_price, std::move(order));
         stop_index_[order_id] = StopLocation(Side::SELL, it);
     }
+    reports.emplace_back(ExecutionReport{order_id, ExecutionType::DORMANT, order.quantity, order.price, std::vector<Fill>{}});
 }
 
 std::vector<Order> StopOrderBook::triggerUpTo(Price last_trade_price) {
@@ -190,26 +177,48 @@ std::vector<Order> StopOrderBook::triggerUpTo(Price last_trade_price) {
     return triggered;
 }
 
-bool StopOrderBook::cancel(OrderId order_id, std::vector<ExecutionReport>& reports) {
-    auto order_it = stop_index_.find(order_id);
-    if (order_it == stop_index_.end()) {
-        reports.emplace_back(ExecutionReport{order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+
+// bool StopOrderBook::cancel(OrderId order_id, std::vector<ExecutionReport>& reports) {
+//     auto order_it = stop_index_.find(order_id);
+//     if (order_it == stop_index_.end()) {
+//         reports.emplace_back(ExecutionReport{order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{}});
+//         return false;
+//     }
+//     const StopLocation& loc = order_it->second;
+//     const Qty canceled_quantity = loc.it->second.quantity;
+//     const Price stop_price = loc.it->second.stop_price;
+//     if (loc.side == Side::BUY) {
+//         buy_stops_.erase(loc.it);
+//     } else {
+//         sell_stops_.erase(loc.it);
+//     }
+
+//     stop_index_.erase(order_it);
+//     reports.emplace_back(ExecutionReport{order_id, ExecutionType::CANCELED,
+//                                          canceled_quantity,
+//                                          stop_price,
+//                                          std::vector<Fill>{}});
+//     return true;
+// }
+
+bool StopOrderBook::removeAndReport(OrderId order_id, ExecutionType type, std::vector<ExecutionReport>& reports) {
+    auto idx_it = stop_index_.find(order_id);
+    if (idx_it == stop_index_.end()) {
+        reports.emplace_back(order_id, ExecutionType::REJECTED, Qty{0}, Price{0}, std::vector<Fill>{});
         return false;
     }
-    const StopLocation& loc = order_it->second;
-    const Qty canceled_quantity = loc.it->second.quantity;
-    const Price stop_price = loc.it->second.stop_price;
+    StopLocation& loc = idx_it->second;
+    Qty canceled_qty = loc.it->second.quantity;
+    Price stop_price = loc.it->second.stop_price;
+    
     if (loc.side == Side::BUY) {
         buy_stops_.erase(loc.it);
     } else {
         sell_stops_.erase(loc.it);
     }
+    stop_index_.erase(idx_it);
 
-    stop_index_.erase(order_it);
-    reports.emplace_back(ExecutionReport{order_id, ExecutionType::CANCELED,
-                                         canceled_quantity,
-                                         stop_price,
-                                         std::vector<Fill>{}});
+    reports.emplace_back(order_id, type, canceled_qty, stop_price, std::vector<Fill>{});
     return true;
 }
 
@@ -249,7 +258,7 @@ bool StopOrderBook::modify(const ModifyRequest& req, std::vector<ExecutionReport
             reports.pop_back(); 
         }
         
-        this->add(std::move(backup_order));
+        this->add(std::move(backup_order), reports);
         reports.emplace_back(ExecutionReport{
             req.order_id, ExecutionType::MODIFIED, req.new_quantity, req.new_price, {}
         });
@@ -261,22 +270,10 @@ bool StopOrderBook::modify(const ModifyRequest& req, std::vector<ExecutionReport
 
 void StopOrderBook::purgeDayOrders(std::vector<ExecutionReport>& cancellations) noexcept {
     std::vector<OrderId> targets_to_kill;
-    for (auto it = buy_stops_.begin(); it != buy_stops_.end(); /* advanced manually */) {
-        if (it->second.tif == TimeInForce::DAY) {
-            targets_to_kill.push_back(it->second.order_id);
-            ++it;
-        } else {
-            ++it;
-        }
-    }
+    for (const auto& [price, order] : buy_stops_)
+        if (order.tif == TimeInForce::DAY) targets_to_kill.push_back(order.order_id);
+    for (const auto& [price, order] : sell_stops_)
+        if (order.tif == TimeInForce::DAY) targets_to_kill.push_back(order.order_id);
 
-    for (auto it = sell_stops_.begin(); it != sell_stops_.end(); /* advanced manually */) {
-        if (it->second.tif == TimeInForce::DAY) {
-            targets_to_kill.push_back(it->second.order_id);
-            ++it;
-        } else {
-            ++it;
-        }
-    }
-    for (OrderId id : targets_to_kill) cancel(id, cancellations);
+    for (OrderId id : targets_to_kill) expire(id, cancellations);
 }

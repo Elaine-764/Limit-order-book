@@ -22,6 +22,7 @@ struct Fill {
   OrderId incoming_order_id;
   Price price;
   Qty quantity;
+  Qty resting_remaining_qty;
   std::chrono::steady_clock::time_point timestamp;
 };
 
@@ -31,6 +32,9 @@ struct ExecutionReport {
   Qty quantity_remaining;
   Price price;
   std::vector<Fill> fills;
+
+  ExecutionReport(OrderId id, ExecutionType t, Qty q, Price p, std::vector<Fill> f)
+    : order_id(id), type(t), quantity_remaining(q), price(p), fills(std::move(f)) {}
 };
 
 struct CancelRequest {

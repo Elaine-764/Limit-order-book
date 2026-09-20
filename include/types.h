@@ -5,6 +5,8 @@
 
 template <typename Tag, typename T>
 class StrongType {
+  private:
+    T value_;
   public:
     explicit constexpr StrongType(T v): value_(v) {}
     constexpr T get() const { return value_; }
@@ -54,8 +56,6 @@ class StrongType {
     [[nodiscard]] friend constexpr auto operator<=>(const StrongType& lhs, const T& rhs) noexcept {
       return lhs.value_ <=> rhs;
     }
-  private:
-    T value_;
 };
 
 struct PriceTag{}; struct QtyTag{}; struct OrderIdTag{};
@@ -88,7 +88,11 @@ enum FillPolicy { NORMAL = 0,
 enum class ExecutionType {
   FILLED = 0,
   PARTIALLY_FILLED,
+  NEW, // newly added resting orders
+  DORMANT, // newly added dormant orders in the stop order book
   CANCELED, // Used when Market orders run out of liquidity
   REJECTED,
-  MODIFIED}
+  MODIFIED,
+  EXPIRED,
+  TRIGGERED}
 ;

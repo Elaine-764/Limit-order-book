@@ -6,7 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <chrono>
-
+#include <optional>
 /*
 How order type, time in force, and fill policy are handled...
 
@@ -23,51 +23,55 @@ Time In Force:
 Fill Policy:
 - AON: check liquidity; if not enough orders, give Cancel report for the volume of the entire incoming order
 */
+bool MatchingEngine::hasEnoughLiquidity(const Order& order, OrderBook& book) const {
+    Qty available{0};
 
-bool hasEnoughLiquidity(const Order& order, OrderBook& book) {
-    Qty avail_vol(0);
-    if (order.side == Side::BUY) {
-        for (auto it = book.getAsks().cbegin(); it != book.getAsks().cend(); ++ it) {
-            if (order.type == OrderType::LIMIT && it->first > order.price) break;
-            avail_vol += it->second.getQty();
-            if (avail_vol >= order.quantity) return true;
+    auto accumulate = [&](auto& book_side) {
+        for (const auto& [price, level] : book_side) {
+            if (order.type == OrderType::LIMIT) {
+                bool inReach = (order.side == Side::BUY) ? (price <= order.price)
+                                                          : (price >= order.price);
+                if (!inReach) break;   // map is ordered — nothing further can be in reach either
+            }
+            available += level.getQty();
+            if (available.get() >= order.quantity.get()) return;
         }
-    } else {
-        for (auto it = book.getBids().cbegin(); it != book.getBids().cend(); ++ it) {
-            if (order.type == OrderType::LIMIT && it->first < order.price) break;
-            avail_vol += it->second.getQty();
-            if (avail_vol >= order.quantity) return true;
-        }
-    }
-    return false;
+    };
+
+    if (order.side == Side::BUY) accumulate(book.getAsks());
+    else                          accumulate(book.getBids());
+
+    return available.get() >= order.quantity.get();
 }
+// note: the liquidity check assumes all resting quantity is consumable; interactions between multiple AON orders at the same level aren't modeled precisely
 
 std::vector<ExecutionReport> MatchingEngine::submit(Order order, OrderBook& book, StopOrderBook& stop_book) {
     std::vector<ExecutionReport> reports;
 
-    // flat queue to hold orders to process
-    std::vector<Order> order_queue;
+    std::deque<Order> order_queue;
     order_queue.push_back(std::move(order));
 
     size_t queue_index = 0;
     while (queue_index < order_queue.size()) {
-        Order& cur_order = order_queue[queue_index++];
+        Order& cur_order = order_queue[queue_index++];   // stays valid across push_back — deque guarantee
 
-        if (cur_order.tif == TimeInForce::FILL_OR_KILL || 
-           cur_order.fill == FillPolicy::ALL_OR_NONE) {
-            
-            if (!hasEnoughLiquidity(cur_order, book)) {
+        bool requiresFullFill = (cur_order.tif == TimeInForce::FILL_OR_KILL) ||
+                                (cur_order.fill == FillPolicy::ALL_OR_NONE);
+
+        if (requiresFullFill && !hasEnoughLiquidity(cur_order, book)) {
+            if (cur_order.tif == TimeInForce::FILL_OR_KILL || cur_order.type == OrderType::MARKET) {
+                // FOK always kills outright. AON on a MARKET order also kills outright,
+                // because market orders never rest — there's nowhere for it to wait.
                 reports.push_back(ExecutionReport{
-                    cur_order.order_id,
-                    ExecutionType::CANCELED,
-                    cur_order.quantity,
-                    Price(0),
-                    std::vector<Fill>{}
+                    cur_order.order_id, ExecutionType::CANCELED, cur_order.quantity, Price{0}, {}
                 });
-                continue; 
+            } else {
+                // AON on a LIMIT order: can't fill now, so it rests and waits for future liquidity.
+                book.addRestingOrder(cur_order, cur_order.side, reports);   // emits NEW
             }
+            continue;
         }
-        
+
         std::vector<Fill> fills;
         switch (cur_order.type) {
             case OrderType::MARKET:
@@ -77,48 +81,51 @@ std::vector<ExecutionReport> MatchingEngine::submit(Order order, OrderBook& book
                 fills = matchLimit(cur_order, book);
                 break;
             case OrderType::STOP:
-                stop_book.add(cur_order);
-                break;
             case OrderType::STOP_LIMIT:
-                stop_book.add(cur_order);
-                break;
+                stop_book.add(cur_order, reports);
+                continue;
         }
 
         Price last_price(0);
         if (!fills.empty()) {
             last_price = fills.back().price;
 
-            reports.push_back(ExecutionReport {
+            reports.emplace_back(
                 cur_order.order_id,
-                (cur_order.quantity == 0) ? ExecutionType::FILLED : ExecutionType::PARTIALLY_FILLED,
+                (cur_order.quantity.get() == 0) ? ExecutionType::FILLED : ExecutionType::PARTIALLY_FILLED,
                 cur_order.quantity,
                 last_price,
                 fills
-            });
+            );
 
             std::vector<Order> triggered = stop_book.triggerUpTo(last_price);
             for (auto& t : triggered) {
+                reports.emplace_back(
+                    t.order_id,
+                    ExecutionType::TRIGGERED,
+                    t.quantity,
+                    last_price,
+                    std::vector<Fill>{}
+                );
                 t.type = (t.type == OrderType::STOP) ? OrderType::MARKET : OrderType::LIMIT;
-                order_queue.push_back(std::move(t));
+                order_queue.push_back(std::move(t));   // safe: cur_order reference above is unaffected
             }
-        } 
-        // add ExecutionReport with cancellation if needed
-        if (cur_order.quantity > 0) {
-            if (cur_order.type == OrderType::MARKET || 
+        }
+
+        if (cur_order.quantity.get() > 0) {
+            if (cur_order.type == OrderType::MARKET ||
                 cur_order.tif == TimeInForce::IMMEDIATE_OR_CANCEL) {
-                    // Any remaining quantity must be cancled 
-                    reports.push_back(ExecutionReport{
-                        cur_order.order_id,
-                        ExecutionType::CANCELED,
-                        cur_order.quantity,
-                        last_price,
-                        std::vector<Fill>{}
-                    });
-            } else if (cur_order.type == OrderType::LIMIT && 
-                      (cur_order.tif == TimeInForce::DAY || cur_order.tif == TimeInForce::GOOD_TIL_CANCELED)) {
-                        book.addRestingOrder(cur_order, cur_order.side);
-                        // TODO: add report here
-                      }
+                reports.emplace_back(
+                    cur_order.order_id,
+                    ExecutionType::CANCELED,
+                    cur_order.quantity,
+                    last_price,
+                    std::vector<Fill>{}
+                );
+            } else if (cur_order.type == OrderType::LIMIT &&
+                       (cur_order.tif == TimeInForce::DAY || cur_order.tif == TimeInForce::GOOD_TIL_CANCELED || cur_order.tif == TimeInForce::NONE)) {
+                book.addRestingOrder(cur_order, cur_order.side, reports);
+            }
         }
     }
     return reports;
@@ -127,71 +134,45 @@ std::vector<ExecutionReport> MatchingEngine::submit(Order order, OrderBook& book
 std::vector<Fill> MatchingEngine::matchMarket(Order& order, OrderBook& book) {
     std::vector<Fill> fills;
     Qty remaining = order.quantity;
-    // match the order based on the best existing bid/ask in the books
-    if (order.side == Side::BUY) {
-        auto& asks = book.getAsks();
-    
-        while (remaining > 0) {
-            if (asks.empty()) {
-                // no more orders to transact with
-                break;
-            }
-            auto& [price, price_level] = *asks.begin();
-            
-            while (!price_level.isEmpty() && remaining > 0) {
+
+    auto sweep = [&](auto& book_side) {
+        while (remaining.get() > 0) {
+            if (book_side.empty()) break;
+
+            auto& [price, price_level] = *book_side.begin();
+
+            while (!price_level.isEmpty() && remaining.get() > 0) {
                 auto transacted_order_it = price_level.begin();
                 Qty transacted_qty = std::min(remaining, transacted_order_it->quantity);
-                fills.push_back(Fill {
-                                    transacted_order_it->order_id,
-                                    order.order_id,
-                                    price,
-                                    transacted_qty,
-                                    std::chrono::steady_clock::now()
-                                });
+                Qty resting_remaining = transacted_order_it->quantity - transacted_qty;
+
+                fills.emplace_back(
+                    transacted_order_it->order_id,
+                    order.order_id,
+                    price,
+                    transacted_qty,
+                    resting_remaining,
+                    std::chrono::steady_clock::now()
+                );
+
                 remaining -= transacted_qty;
-                transacted_order_it->quantity -= transacted_qty;
-                price_level.adjustQty(-transacted_qty);
+                transacted_order_it->quantity = resting_remaining;
+                price_level.reduceQty(transacted_qty);
 
-                if (transacted_order_it->quantity == 0) {
-                    book.removeFilledOrder(transacted_order_it->order_id);
-                }
-
-            }
-            if (price_level.isEmpty()) {
-                asks.erase(price);
-            }
-        }
-    } else { // sell side
-        auto& bids = book.getBids();
-        while (remaining > 0) {
-            if (bids.empty()) {
-                break;
-            }
-
-            auto& [price, price_level] = *bids.begin();
-            while (!price_level.isEmpty() && remaining > 0) {
-                auto transacted_order_it = price_level.begin();
-                Qty transacted_qty = std::min(remaining, transacted_order_it->quantity);
-                fills.push_back(Fill {
-                                    transacted_order_it->order_id,
-                                    order.order_id,
-                                    price,
-                                    transacted_qty,
-                                    std::chrono::steady_clock::now()
-                                });
-                remaining -= transacted_qty;
-                transacted_order_it->quantity -= transacted_qty;
-                price_level.adjustQty(-transacted_qty);
-
-                if (transacted_order_it->quantity == 0) {
+                if (resting_remaining.get() == 0) {
                     book.removeFilledOrder(transacted_order_it->order_id);
                 }
             }
+
             if (price_level.isEmpty()) {
-                bids.erase(price);
+                book_side.erase(price);
             }
         }
-    }
+    };
+
+    if (order.side == Side::BUY) sweep(book.getAsks());
+    else                          sweep(book.getBids());
+
     order.quantity = remaining;
     return fills;
 }
@@ -199,73 +180,50 @@ std::vector<Fill> MatchingEngine::matchMarket(Order& order, OrderBook& book) {
 std::vector<Fill> MatchingEngine::matchLimit(Order& order, OrderBook& book) {
     std::vector<Fill> fills;
     Qty remaining = order.quantity;
-    // match the order based on the best existing bid/ask in the books
-    if (order.side == Side::BUY) {
-        auto& asks = book.getAsks();
-    
-        while (remaining > 0) {
-            if (asks.empty()) {
-                // no more orders to transact with
-                break;
-            }
-            auto& [price, price_level] = *asks.begin();
+
+    auto sweep = [&](auto& book_side) {
+        while (remaining.get() > 0) {
+            if (book_side.empty()) break;
+
+            auto& [price, price_level] = *book_side.begin();
             if (price > order.price) break;
-            
-            while (!price_level.isEmpty() && remaining > 0) {
-                auto transacted_order_it = price_level.begin();
-                Qty transacted_qty = std::min(remaining, transacted_order_it->quantity);
-                fills.push_back(Fill {
-                                    transacted_order_it->order_id,
-                                    order.order_id,
-                                    price,
-                                    transacted_qty,
-                                    std::chrono::steady_clock::now()
-                                });
-                remaining -= transacted_qty;
-                transacted_order_it->quantity -= transacted_qty;
-                price_level.adjustQty(-transacted_qty);
 
-                if (transacted_order_it->quantity == 0) {
-                    book.removeFilledOrder(transacted_order_it->order_id);
+            while (!price_level.isEmpty() && remaining.get() > 0) {
+                auto transacted_order_it = price_level.begin();
+                if (transacted_order_it->fill == FillPolicy::ALL_OR_NONE &&
+                    remaining.get() < transacted_order_it->quantity.get()) {
+                    break;   // stop sweeping this level; don't touch this order at all
                 }
-
-            }
-            if (price_level.isEmpty()) {
-                asks.erase(price);
-            }
-        }
-    } else { // sell side
-        auto& bids = book.getBids();
-        while (remaining > 0) {
-            if (bids.empty()) {
-                break;
-            }
-
-            auto& [price, price_level] = *bids.begin();
-            if (price < order.price) break;
-            while (!price_level.isEmpty() && remaining > 0) {
-                auto transacted_order_it = price_level.begin();
                 Qty transacted_qty = std::min(remaining, transacted_order_it->quantity);
-                fills.push_back(Fill {
-                                    transacted_order_it->order_id,
-                                    order.order_id,
-                                    price,
-                                    transacted_qty,
-                                    std::chrono::steady_clock::now()
-                                });
-                remaining -= transacted_qty;
-                transacted_order_it->quantity -= transacted_qty;
-                price_level.adjustQty(-transacted_qty);
+                Qty resting_remaining = transacted_order_it->quantity - transacted_qty;
 
-                if (transacted_order_it->quantity == 0) {
+                fills.emplace_back(
+                    transacted_order_it->order_id,
+                    order.order_id,
+                    price,
+                    transacted_qty,
+                    resting_remaining,
+                    std::chrono::steady_clock::now()
+                );
+
+                remaining -= transacted_qty;
+                transacted_order_it->quantity = resting_remaining;
+                price_level.reduceQty(transacted_qty);
+
+                if (resting_remaining.get() == 0) {
                     book.removeFilledOrder(transacted_order_it->order_id);
                 }
             }
+
             if (price_level.isEmpty()) {
-                bids.erase(price);
+                book_side.erase(price);
             }
         }
-    }
+    };
+
+    if (order.side == Side::BUY) sweep(book.getAsks());
+    else                          sweep(book.getBids());
+
     order.quantity = remaining;
     return fills;
 }

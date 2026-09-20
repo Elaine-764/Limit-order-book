@@ -122,7 +122,37 @@ std::vector<ExecutionReport> Exchange::submitOrder(Order order) {
     auto [book_it, book_inserted] = books_.try_emplace(order.ticker_id, order.ticker_id);
     auto [stop_book_it, stop_inserted] = stop_books_.try_emplace(order.ticker_id, order.ticker_id);
 
-    return engine_.submit(order, book_it->second, stop_book_it->second);
+    reports = engine_.submit(order, book_it->second, stop_book_it->second);
+
+    for (const auto& report : reports) {
+        for (const auto& fill : report.fills) {
+            if (!book_it->second.hasOrder(fill.resting_order_id)) {
+                global_order_registry_.erase(fill.resting_order_id);
+            }
+        }
+    }
+
+    const bool is_stop = order.type == OrderType::STOP || order.type == OrderType::STOP_LIMIT;
+    const bool remains_live = is_stop
+        ? stop_book_it->second.contains(order.order_id)
+        : book_it->second.hasOrder(order.order_id);
+
+    if (remains_live) {
+        global_order_registry_[order.order_id] = OrderMetaData{order.ticker_id, order.type};
+        if (reports.empty()) {
+            reports.emplace_back(
+                order.order_id,
+                is_stop ? ExecutionType::DORMANT : ExecutionType::NEW,
+                order.quantity,
+                order.price,
+                std::vector<Fill>{}
+            );
+        }
+    } else {
+        global_order_registry_.erase(order.order_id);
+    }
+
+    return reports;
 }
 
 std::vector<ExecutionReport> Exchange::modifyOrder(const ModifyRequest& req) {
@@ -188,6 +218,9 @@ std::vector<ExecutionReport> Exchange::runEndOfDaySession() {
     }
     for (auto& [ticker_id, stop_book] : stop_books_) {
         stop_book.purgeDayOrders(cancellations);
+    }
+    for (const auto& report : cancellations) {
+        global_order_registry_.erase(report.order_id);
     }
     return cancellations;
     

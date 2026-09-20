@@ -12,7 +12,9 @@ TEST(StopOrderBookTest, EmptyBookTriggersNothing) {
 
 TEST(StopOrderBookTest, BuyStopTriggersWhenPriceRisesToItsStopPrice) {
     StopOrderBook stops {1};
-    stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP));
+    std::vector<ExecutionReport> reports;
+
+    stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP), reports);
     // assuming stop_price is set via the order's price field per your multimap key,
     // or a dedicated stop_price field — adjust makeOrder args to match your Order struct.
 
@@ -24,7 +26,8 @@ TEST(StopOrderBookTest, BuyStopTriggersWhenPriceRisesToItsStopPrice) {
 
 TEST(StopOrderBookTest, BuyStopDoesNotTriggerBelowItsStopPrice) {
     StopOrderBook stops {1};
-    stops.add(makeOrder(1, Side::BUY, Price{105}, Qty{10}, OrderType::STOP));
+    std::vector<ExecutionReport> reports;
+    stops.add(makeOrder(1, Side::BUY, Price{105}, Qty{10}, OrderType::STOP), reports);
 
     auto triggered = stops.triggerUpTo(Price{100});   // hasn't reached 105 yet
 
@@ -33,8 +36,9 @@ TEST(StopOrderBookTest, BuyStopDoesNotTriggerBelowItsStopPrice) {
 
 TEST(StopOrderBookTest, OnlyBuyStopsAtOrBelowLastTradeTrigger) {
     StopOrderBook stops {1};
-    stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP));
-    stops.add(makeOrder(2, Side::BUY, Price{105}, Qty{10}, OrderType::STOP));
+    std::vector<ExecutionReport> reports;
+    stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP), reports);
+    stops.add(makeOrder(2, Side::BUY, Price{105}, Qty{10}, OrderType::STOP), reports);
 
     auto triggered = stops.triggerUpTo(Price{102});   // crosses 100, not 105
 
@@ -44,7 +48,8 @@ TEST(StopOrderBookTest, OnlyBuyStopsAtOrBelowLastTradeTrigger) {
 
 TEST(StopOrderBookTest, SellStopTriggersWhenPriceFallsToItsStopPrice) {
     StopOrderBook stops {1};
-    stops.add(makeOrder(1, Side::SELL, Price{95}, Qty{10}, OrderType::STOP));
+    std::vector<ExecutionReport> reports;
+    stops.add(makeOrder(1, Side::SELL, Price{95}, Qty{10}, OrderType::STOP), reports);
 
     auto triggered = stops.triggerUpTo(Price{95});
 
@@ -54,7 +59,8 @@ TEST(StopOrderBookTest, SellStopTriggersWhenPriceFallsToItsStopPrice) {
 
 TEST(StopOrderBookTest, SellStopDoesNotTriggerAbovePriceItsStopPrice) {
     StopOrderBook stops {1};
-    stops.add(makeOrder(1, Side::SELL, Price{95}, Qty{10}, OrderType::STOP));
+    std::vector<ExecutionReport> reports;
+    stops.add(makeOrder(1, Side::SELL, Price{95}, Qty{10}, OrderType::STOP), reports);
 
     auto triggered = stops.triggerUpTo(Price{100});   // hasn't fallen to 95 yet
 
@@ -63,8 +69,9 @@ TEST(StopOrderBookTest, SellStopDoesNotTriggerAbovePriceItsStopPrice) {
 
 TEST(StopOrderBookTest, OnlySellStopsAtOrAboveLastTradeTrigger) {
     StopOrderBook stops {1};
-    stops.add(makeOrder(1, Side::SELL, Price{100}, Qty{10}, OrderType::STOP));
-    stops.add(makeOrder(2, Side::SELL, Price{95}, Qty{10}, OrderType::STOP));
+    std::vector<ExecutionReport> reports;
+    stops.add(makeOrder(1, Side::SELL, Price{100}, Qty{10}, OrderType::STOP), reports);
+    stops.add(makeOrder(2, Side::SELL, Price{95}, Qty{10}, OrderType::STOP), reports);
 
     auto triggered = stops.triggerUpTo(Price{97});   // crosses 100 downward, not 95
 
@@ -74,7 +81,9 @@ TEST(StopOrderBookTest, OnlySellStopsAtOrAboveLastTradeTrigger) {
 
 TEST(StopOrderBookTest, TriggeredOrdersAreConsumedNotReTriggered) {
     StopOrderBook stops {1};
-    stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP));
+    std::vector<ExecutionReport> reports;
+
+    stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP), reports);
 
     auto first = stops.triggerUpTo(Price{102});
     ASSERT_EQ(first.size(), 1u);
@@ -85,8 +94,9 @@ TEST(StopOrderBookTest, TriggeredOrdersAreConsumedNotReTriggered) {
 
 TEST(StopOrderBookTest, BuyAndSellStopsAreIndependent) {
     StopOrderBook stops {1};
-    stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP));
-    stops.add(makeOrder(2, Side::SELL, Price{95}, Qty{10}, OrderType::STOP));
+    std::vector<ExecutionReport> reports;
+    stops.add(makeOrder(1, Side::BUY, Price{100}, Qty{10}, OrderType::STOP), reports);
+    stops.add(makeOrder(2, Side::SELL, Price{95}, Qty{10}, OrderType::STOP), reports);
 
     auto triggered = stops.triggerUpTo(Price{100});   // triggers the buy stop only
 
