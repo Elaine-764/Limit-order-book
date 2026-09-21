@@ -758,3 +758,110 @@ TEST(ExchangeTest, EndOfDayPurgesOnlyMatchingTickersDayOrders) {
     ASSERT_FALSE(exchange.orderExists(1, OrderId{1}));
     ASSERT_FALSE(exchange.orderExists(2, OrderId{2}));
 }
+
+// ============================================================
+// Regression test: matchLimit must respect the seller's price floor
+// (caught via simulate.cc trace — a SELL LIMIT at $1039 was incorrectly
+// matching resting bids at $38 and $48)
+// ============================================================
+
+TEST(ExchangeTest, SellLimitDoesNotCrossBelowItsLimitPrice) {
+    Exchange exchange;
+    exchange.submitOrder(makeOrder(1, Side::BUY, Price{38}, Qty{280}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    exchange.submitOrder(makeOrder(3, Side::BUY, Price{48}, Qty{131}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+
+    auto reports = exchange.submitOrder(
+        makeOrder(6, Side::SELL, Price{1039}, Qty{161}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1)
+    );
+
+    // best bid ($48) is nowhere near the seller's floor ($1039) — must NOT cross
+    ASSERT_EQ(reports.size(), 1u);
+    ASSERT_EQ(reports[0].type, ExecutionType::NEW);
+    ASSERT_TRUE(reports[0].fills.empty());
+
+    ASSERT_EQ(exchange.bestAsk(1), Price{1039});   // rests as the new best ask
+    ASSERT_EQ(exchange.bestBid(1), Price{48});      // both resting buys untouched
+    ASSERT_EQ(exchange.getQty(1, Side::BUY, Price{48}).get(), 131);
+    ASSERT_EQ(exchange.getQty(1, Side::BUY, Price{38}).get(), 280);
+}
+
+// ============================================================
+// bestBid / bestAsk behavior
+// ============================================================
+
+TEST(ExchangeTest, BestBidUpdatesAsHigherOrdersArriveAndAreRemoved) {
+    Exchange exchange;
+    ASSERT_EQ(exchange.bestBid(1), std::nullopt);
+
+    exchange.submitOrder(makeOrder(1, Side::BUY, Price{100}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    ASSERT_EQ(exchange.bestBid(1), Price{100});
+
+    // a higher bid arrives — becomes the new best
+    exchange.submitOrder(makeOrder(2, Side::BUY, Price{105}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    ASSERT_EQ(exchange.bestBid(1), Price{105});
+
+    // a lower bid arrives — does NOT become best
+    exchange.submitOrder(makeOrder(3, Side::BUY, Price{90}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    ASSERT_EQ(exchange.bestBid(1), Price{105});
+
+    // removing the current best reveals the next-highest
+    exchange.cancelOrder(CancelRequest{OrderId{2}, 1});
+    ASSERT_EQ(exchange.bestBid(1), Price{100});
+
+    exchange.cancelOrder(CancelRequest{OrderId{1}, 1});
+    ASSERT_EQ(exchange.bestBid(1), Price{90});
+
+    exchange.cancelOrder(CancelRequest{OrderId{3}, 1});
+    ASSERT_EQ(exchange.bestBid(1), std::nullopt);   // back to empty
+}
+
+TEST(ExchangeTest, BestAskUpdatesAsLowerOrdersArriveAndAreRemoved) {
+    Exchange exchange;
+    ASSERT_EQ(exchange.bestAsk(1), std::nullopt);
+
+    exchange.submitOrder(makeOrder(1, Side::SELL, Price{100}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    ASSERT_EQ(exchange.bestAsk(1), Price{100});
+
+    // a lower ask arrives — becomes the new best (lowest wins for asks)
+    exchange.submitOrder(makeOrder(2, Side::SELL, Price{95}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    ASSERT_EQ(exchange.bestAsk(1), Price{95});
+
+    // a higher ask arrives — does NOT become best
+    exchange.submitOrder(makeOrder(3, Side::SELL, Price{110}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    ASSERT_EQ(exchange.bestAsk(1), Price{95});
+
+    exchange.cancelOrder(CancelRequest{OrderId{2}, 1});
+    ASSERT_EQ(exchange.bestAsk(1), Price{100});
+
+    exchange.cancelOrder(CancelRequest{OrderId{1}, 1});
+    ASSERT_EQ(exchange.bestAsk(1), Price{110});
+
+    exchange.cancelOrder(CancelRequest{OrderId{3}, 1});
+    ASSERT_EQ(exchange.bestAsk(1), std::nullopt);
+}
+
+TEST(ExchangeTest, BestBidAskAreIsolatedPerTicker) {
+    Exchange exchange;
+    exchange.submitOrder(makeOrder(1, Side::BUY,  Price{50}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    exchange.submitOrder(makeOrder(2, Side::SELL, Price{60}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+
+    exchange.submitOrder(makeOrder(3, Side::BUY,  Price{999}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 2));
+    exchange.submitOrder(makeOrder(4, Side::SELL, Price{1000}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 2));
+
+    ASSERT_EQ(exchange.bestBid(1), Price{50});
+    ASSERT_EQ(exchange.bestAsk(1), Price{60});
+    ASSERT_EQ(exchange.bestBid(2), Price{999});
+    ASSERT_EQ(exchange.bestAsk(2), Price{1000});
+}
+
+TEST(ExchangeTest, BestBidAskReflectPartialFillNotJustTopLevelPresence) {
+    Exchange exchange;
+    exchange.submitOrder(makeOrder(1, Side::SELL, Price{100}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+    exchange.submitOrder(makeOrder(2, Side::SELL, Price{101}, Qty{5}, OrderType::LIMIT, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+
+    // fully consumes the $100 level, best ask should move to $101
+    exchange.submitOrder(makeOrder(3, Side::BUY, Price{0}, Qty{5}, OrderType::MARKET, TimeInForce::NONE, FillPolicy::NORMAL, Price{0}, 1));
+
+    ASSERT_EQ(exchange.bestAsk(1), Price{101});
+    ASSERT_EQ(exchange.askLevelCount(1), 1u);
+}

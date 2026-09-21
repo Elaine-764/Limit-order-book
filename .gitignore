@@ -1,7 +1,9 @@
 build/
+build-local/
 planning/
 **/.DS_Store
 .DS_Store
 **/*2.cc
 .vscode/*
 tests/benchmarks/
+tests/stress_test_results/*.txt

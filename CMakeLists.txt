@@ -64,3 +64,9 @@ gtest_discover_tests(lob_tests)
 add_executable(bench tests/benchmarks/benchmark_main.cc)
 target_include_directories(bench PRIVATE ${CMAKE_SOURCE_DIR}/tests)
 target_link_libraries(bench PRIVATE benchmark::benchmark lob_core)
+
+add_executable(simulate tests/benchmarks/simulate.cc)
+target_link_libraries(simulate PRIVATE lob_core)
+
+add_executable(latency_profile tests/benchmarks/latency_profile.cc)
+target_link_libraries(latency_profile PRIVATE lob_core)

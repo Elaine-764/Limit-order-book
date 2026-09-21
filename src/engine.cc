@@ -186,7 +186,11 @@ std::vector<Fill> MatchingEngine::matchLimit(Order& order, OrderBook& book) {
             if (book_side.empty()) break;
 
             auto& [price, price_level] = *book_side.begin();
-            if (price > order.price) break;
+
+            // very important, after merging the buy and sell logic with lambda
+            bool outOfReach = (order.side == Side::BUY) ? (price > order.price)
+                                                      : (price < order.price);
+            if (outOfReach) break;
 
             while (!price_level.isEmpty() && remaining.get() > 0) {
                 auto transacted_order_it = price_level.begin();

@@ -1,2 +1,0 @@
-/usr/bin/ar qc liblob_core.a CMakeFiles/lob_core.dir/src/orderbook.cc.o CMakeFiles/lob_core.dir/src/engine.cc.o CMakeFiles/lob_core.dir/src/exchange.cc.o
-/usr/bin/ranlib liblob_core.a

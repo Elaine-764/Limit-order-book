@@ -1,5 +1,0 @@
-if(EXISTS "/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests_e3b0c442_tests.cmake")
-  include("/Users/lijing/Desktop/Personal/Coding/Quant/limit_order_book/build-local/lob_tests_e3b0c442_tests.cmake")
-else()
-  add_test(lob_tests_NOT_BUILT lob_tests_NOT_BUILT)
-endif()
